@@ -1,0 +1,39 @@
+from const import (
+ON_MAP,
+ON_NEMU,
+ON_INVENTORY,
+)
+
+from utils import (
+get_actable_chars,
+get_actable_entities,
+get_key,
+)
+from variable import (
+state,
+
+)
+from dispcontroller import (
+draw,
+)
+
+def main():
+  while True:
+    if state is ON_MAP:
+        chars=get_actable_chars(now_chars)
+        for char in chars:
+                if char.type is "player":
+                    key=get_key()
+                    char.action(key)
+                elif char.type is "enemy":
+                    char.action()
+        entities=get_actable_entities(now_entities)
+        for entity in entities:
+            entity.action()
+    elif state is ON_NEMU:
+        key=get_key()
+        nemu.move(key)
+    elif state is ON_INVENTORY:
+        key=get_key()
+        inventory.move(key)
+    draw()
