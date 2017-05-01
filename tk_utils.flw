@@ -1,0 +1,10 @@
+import pygame
+import actor
+
+def get_actable_chars():
+    
+    pass
+def get_actable_entities():
+    pass
+def get_key():
+    pass
