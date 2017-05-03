@@ -1,0 +1,4 @@
+*.ttc
+/graphics/
+*.pyc
+/.idea

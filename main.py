@@ -1,16 +1,25 @@
 # coding:utf-8
-import pygame
-import random
-from util import *
-from pygameWrapper import *
-from ActorController import *
+import variable
 from Actor import *
-from variable import *
+from ActorController import *
 from world import *
+
 l = stage.getImageList("chars.bmp")
 clock = pygame.time.Clock()
 
-accn=ActorController()
+
+class mapController():
+    def __init__(self):
+        self.field = []
+        self.char = []
+        self.item = []
+
+
+currentMap = mapController()
+
+accn = ActorController()
+
+
 def main():
     worldInit(10)
     px = random.randint(0, 256)
@@ -35,13 +44,13 @@ def main():
 
     while True:
         stage.prepareRedraw()
-        #print cutWorldMapToDisplay(worldMap, p.x,p.y,mapX,mapY)
-        stage.drawMap(cutWorldMapToDisplay(worldMap, p.x,p.y,mapX,mapY), source="field")
-        stage.drawMap(cutWorldMapToDisplay(char, p.x,p.y,mapX,mapY), "char")
-        accn.action()
+        # print cutWorldMapToDisplay(worldMap, p.x,p.y,mapX,mapY)
+
         stage.drawMap(cutWorldMapToDisplay(worldMap, p.x, p.y, mapX, mapY), source="field")
         stage.drawMap(cutWorldMapToDisplay(char, p.x, p.y, mapX, mapY), "char")
-        #stage.update()
+        accn.action()
+        #stage.drawMap(cutWorldMapToDisplay(worldMap, p.x, p.y, mapX, mapY), source="field")
+        #stage.drawMap(cutWorldMapToDisplay(char, p.x, p.y, mapX, mapY), "char")
         clock.tick(60)
 
 

@@ -1,13 +1,6 @@
 import random
-from pygameWrapper import *
-#from ActorController import *
-
-#from Actor import *
-
-#map = [[-1 for i in xrange(mapY)] for j in xrange(mapX)]
-#for x in xrange(mapX):
-#    for y in xrange(mapY):
-#        map[x][y] = 5  # random.randint(1, 28)
+mapX=640/32
+mapY=480/32
 char = [[-1 for i in xrange(256)] for j in xrange(256)]
 actors=[]
 NOACT=0
@@ -17,43 +10,45 @@ WAIT=3
 LAND=5
 SEA=3
 idList=[0 for i in xrange(1024)]
+
 worldMap=[[0 for i in xrange(256)] for j in xrange(256)]
 for i in xrange(256*256):
     worldMap[random.randint(0,255)][random.randint(0,255)]=1
 
-def func(x,y):
-    s = worldMap[y + 1][x + 1] + worldMap[y + 1][x - 1] + worldMap[y + 1][x] + worldMap[y][x + 1] + worldMap[y][x - 1] + \
-        worldMap[y - 1][x + 1] + worldMap[y - 1][x] + worldMap[y - 1][x - 1]
-    if s == 0:
-        worldMap[y][x] = 0
-    elif s == 1:
-        worldMap[y][x] = 1
-        if random.randint(1, 100) < 100:
-            worldMap[y][x] = 0
-    elif s == 2:
-        worldMap[y][x] = 1
-        if random.randint(1, 100) < 100:
-            worldMap[y][x] = 0
-    elif s == 3:
-        worldMap[y][x] = 1
-        if random.randint(1, 100) < 100:
-            worldMap[y][x] = 0
-    elif s == 4:
-        worldMap[y][x] = 1
-        if random.randint(1, 100) < 50:
-            worldMap[y][x] = 0
-    elif s == 6:
-        worldMap[y][x] = 1
-        if random.randint(1, 100) < 10:
-            worldMap[y][x] = 0
-    elif s == 7:
-        worldMap[y][x] = 1
-        if random.randint(1, 100) < 0:
-            worldMap[y][x] = 0
-    elif s == 8:
-        worldMap[y][x] = 1
+
 
 def worldInit(n):
+    def func(x,y):
+        s = worldMap[y + 1][x + 1] + worldMap[y + 1][x - 1] + worldMap[y + 1][x] + worldMap[y][x + 1] + worldMap[y][x - 1] + \
+            worldMap[y - 1][x + 1] + worldMap[y - 1][x] + worldMap[y - 1][x - 1]
+        if s == 0:
+            worldMap[y][x] = 0
+        elif s == 1:
+            worldMap[y][x] = 1
+            if random.randint(1, 100) < 100:
+                worldMap[y][x] = 0
+        elif s == 2:
+            worldMap[y][x] = 1
+            if random.randint(1, 100) < 100:
+                worldMap[y][x] = 0
+        elif s == 3:
+            worldMap[y][x] = 1
+            if random.randint(1, 100) < 100:
+                worldMap[y][x] = 0
+        elif s == 4:
+            worldMap[y][x] = 1
+            if random.randint(1, 100) < 50:
+                worldMap[y][x] = 0
+        elif s == 6:
+            worldMap[y][x] = 1
+            if random.randint(1, 100) < 10:
+                worldMap[y][x] = 0
+        elif s == 7:
+            worldMap[y][x] = 1
+            if random.randint(1, 100) < 0:
+                worldMap[y][x] = 0
+        elif s == 8:
+            worldMap[y][x] = 1
     for x in xrange(256):
         for y in xrange(256):
             if worldMap[y][x]==LAND:

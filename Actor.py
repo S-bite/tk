@@ -2,7 +2,9 @@
 from world import *
 from util import *
 from variable import (char)
-print char
+from pygame.locals import *
+from pygameWrapper import stage
+import time
 
 """
 Actor:
@@ -38,8 +40,10 @@ class Actor():
         self.image = ActorData[2]
         self.race  = ActorData[3]
         self.job   = ActorData[4]
-        self.HP    = ActorData[5]
-        self.MP    = ActorData[6]
+        self.HP_MAX    = ActorData[5]
+        self.HP = ActorData[5]
+        self.MP_MAX    = ActorData[6]
+        self.MP = ActorData[5]
         self.STR   = ActorData[7]
         self.DEF   = ActorData[8]
         self.SPD   = ActorData[9]
@@ -65,7 +69,7 @@ class Enemy(Actor):
 
 class Player(Actor):
     def action(self,key):
-        self.move(key)
+        return self.move(key)
     def move(self,key):
         stage.drawMap(cutWorldMapToDisplay(worldMap, self.x, self.y, mapX, mapY), source="field")
         stage.drawMap(cutWorldMapToDisplay(char, self.x, self.y, mapX, mapY), "char")
@@ -83,7 +87,7 @@ class Player(Actor):
         if  res==2:
           #  time.sleep(0.1)
             stage.appendLog(u"その方向には進めない")
-            return -1
+            return False
         if res==1:
             """
             attack
@@ -91,7 +95,7 @@ class Player(Actor):
             res=self.attack(getIdFromPos(self.x+xMove,self.y+yMove))
             stage.appendLog(u"敵に"+str(res)+u"のダメージを与えた")
             time.sleep(0.1)
-            return -1
+            return False
         char[self.y][self.x] = -1
         self.x += xMove
         self.y += yMove
@@ -102,7 +106,7 @@ class Player(Actor):
         #stage.drawMap(cutWorldMapToDisplay(char, self.x, self.y, mapX, mapY), "char")
 
         #time.sleep(0.1)
-        return 1
+        return True
     def attack(self,target):#,targetはid
 
         for actor in actors:

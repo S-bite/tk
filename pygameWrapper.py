@@ -1,12 +1,18 @@
 # coding: utf-8
 import pygame
+import logging
 import sys
 import os
+import Actor
 import time
+from variable import(
+mapX,
+mapY
+)
 from collections import deque
 from pygame.locals import *
-mapX=640/32
-mapY=480/32
+logging.basicConfig(level=logging.INFO)
+
 
 pygame.font.init()
 
@@ -29,28 +35,29 @@ class pygameWrapper():
         self.charList = self.getImageList("chars.bmp", transparent=True)
         self.fieldList = self.getImageList("chip12e_map_n.png", transparent=False)
         self.imageSources = [self.fieldList, self.charList]
-
+        self.mapQueue=[]
+        self.charQueue=[]
+        self.itemQueue=[]
     def prepareRedraw(self):
         self.screen.fill((0, 0, 0))
 
+
     def appendLog(self, msg):
         # msg[i*max:(i+1)*max]で、msgをmax文字ごとに切り分ける
-        l = [msg[i * self.LOG_MAX_WIDTH:(i + 1) * self.LOG_MAX_WIDTH] for i in
+        lines = [msg[i * self.LOG_MAX_WIDTH:(i + 1) * self.LOG_MAX_WIDTH] for i in
              xrange(len(msg) / (self.LOG_MAX_WIDTH + 1) + 1)]
-        l = reversed(l)
-        for line in l:
+        for line in lines:
             if len(self.logMessage) >= self.LOG_MAX:
-                self.logMessage.popleft()
-            self.logMessage.append(line)
-
+                self.logMessage.pop()
+            self.logMessage.appendleft(line)
+        self.update()
     def drawLog(self):
         i = 1
-        for msg in reversed(self.logMessage):
+        for msg in self.logMessage:
             text = self.font.render(msg, False, (255, 255, 255))  # 描画する文字列の設定
             adjust=4 #そのままだと、最下層のメッセージが欠けるので、これを入れて調整する
             self.screen.blit(text, [0, self.height - adjust - i * self.FONT_SIZE])  # 文字列の表示位置
             i += 1
-            print msg
             if i>self.LOG_MAX_VISIBLE:
                 break
 
@@ -59,6 +66,10 @@ class pygameWrapper():
             self.screen.blit(char, (x * 32, y * 32))
         else:
             self.screen.blit(char, (x, y))
+    def drawHP(self,actor):
+        len=(float(actor.HP)/actor.HP_MAX)*self.CHIP_SIZE
+        pygame.draw.line(self.screen, (255, 0, 0), (actor.x*self.CHIP_SIZE,actor.y*self.CHIP_SIZE),(actor.x*self.CHIP_SIZE\
+                                                                                                    +len,actor.y*self.CHIP_SIZE),2)
 
     def drawImage(self, id, x, y, source, x32=True):
         self.drawSurface(self.imageSources[self.getImageIndex(source)][id], x, y, x32)
@@ -69,8 +80,9 @@ class pygameWrapper():
         elif source == "char":
             index = 1
         else:
-            message = "Unknown Source : " + source
-            raise UnboundLocalError, message
+
+            logging.error("Unknown Source : " + source)
+            raise UnboundLocalError
         return index
 
     def drawMap(self, map, source):
@@ -94,6 +106,8 @@ class pygameWrapper():
         return imageList
 
     def update(self):
+
+        self.screen.fill((0, 0, 0), pygame.Rect(0, self.height-(self.FONT_SIZE*self.LOG_MAX_VISIBLE), self.width, self.height))
         self.drawLog()
         pygame.display.update()
 
@@ -102,7 +116,7 @@ class pygameWrapper():
         try:
             image = pygame.image.load(filename)
         except pygame.error, message:
-            print "Can not load a image"
+            logging.error("Can't load a image")
             raise pygame.error, message
         image = image.convert()
         return image
