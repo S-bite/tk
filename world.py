@@ -35,6 +35,7 @@ def cutWorldMapToDisplay(wMap,pX,pY,dispX,dispY):
     res=[]
     for y in xrange(dispY):
         res.append(cutOneLine(y,sX,eX))
+    print res
     return res
 
 
