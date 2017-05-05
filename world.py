@@ -12,6 +12,7 @@ stage.draw(map)
 from variable import *
 # ワールド座標からプレイヤーを中心に表示する座標を切り出す
 def cutWorldMapToDisplay(wMap,pX,pY,dispX,dispY):
+
     sX=pX-dispX/2
     eX=pX+dispX/2 #マップが正方形なのが前提
     if sX<0:
@@ -31,20 +32,22 @@ def cutWorldMapToDisplay(wMap,pX,pY,dispX,dispY):
         eY = len(wMap)
 
     def cutOneLine(i,start,end):
-        return wMap[sY+i][start:end]
+        return wMap[int(sY+i)][int(start):int(end)]
     res=[]
-    for y in xrange(dispY):
+    for y in range(int(dispY)):
         res.append(cutOneLine(y,sX,eX))
-    print res
+    print(res)
     return res
 
 
 def is_movalbe(y,x):
+
     """
     0:行ける
     1:敵
     2:行けない 
     """
+    x,y=int(x),int(y)
     if (x< 0) or (x >= 256) or (y < 0) or (y >= 256):
 
         return 2

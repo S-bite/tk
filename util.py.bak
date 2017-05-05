@@ -7,7 +7,7 @@ def getNewId():
         if id==0:
             idList[i] = 1
             return i
-    print("too many objects")
+    print "too many objects"
     return -1
 
 

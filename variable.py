@@ -1,7 +1,9 @@
 import random
+#from Actor import Player
+#from util import getNewId
 mapX=640/32
 mapY=480/32
-char = [[-1 for i in xrange(256)] for j in xrange(256)]
+char = [[-1 for i in range(256)] for j in range(256)]
 actors=[]
 NOACT=0
 ACTED=1
@@ -9,10 +11,10 @@ WAIT_KEY=2
 WAIT=3
 LAND=5
 SEA=3
-idList=[0 for i in xrange(1024)]
+idList=[0 for i in range(1024)]
 
-worldMap=[[0 for i in xrange(256)] for j in xrange(256)]
-for i in xrange(256*256):
+worldMap=[[0 for i in range(256)] for j in range(256)]
+for i in range(256*256):
     worldMap[random.randint(0,255)][random.randint(0,255)]=1
 
 
@@ -49,21 +51,21 @@ def worldInit(n):
                 worldMap[y][x] = 0
         elif s == 8:
             worldMap[y][x] = 1
-    for x in xrange(256):
-        for y in xrange(256):
+    for x in range(256):
+        for y in range(256):
             if worldMap[y][x]==LAND:
                 worldMap[y][x]=0
             elif worldMap[y][x]==SEA:
                 worldMap[y][x]=1
 
-    for t in xrange(n):
-        for i in xrange(256-2):
-            for j in xrange(256-2):
+    for t in range(n):
+        for i in range(256-2):
+            for j in range(256-2):
                 x,y=i+1,j+1
                 func(x,y)
 
-    for x in xrange(256):
-        for y in xrange(256):
+    for x in range(256):
+        for y in range(256):
             if worldMap[y][x]==0:
                 worldMap[y][x]=LAND
             else:
