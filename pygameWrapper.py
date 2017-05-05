@@ -5,6 +5,7 @@ import sys
 import os
 import Actor
 import time
+from world import cutWorldMapToDisplay
 from variable import(
 mapX,
 mapY
@@ -45,7 +46,7 @@ class pygameWrapper():
     def appendLog(self, msg):
         # msg[i*max:(i+1)*max]で、msgをmax文字ごとに切り分ける
         lines = [msg[i * self.LOG_MAX_WIDTH:(i + 1) * self.LOG_MAX_WIDTH] for i in
-             xrange(len(msg) / (self.LOG_MAX_WIDTH + 1) + 1)]
+             range(len(msg) // (self.LOG_MAX_WIDTH + 1) + 1)]
         for line in lines:
             if len(self.logMessage) >= self.LOG_MAX:
                 self.logMessage.pop()
@@ -67,6 +68,7 @@ class pygameWrapper():
         else:
             self.screen.blit(char, (x, y))
     def drawHP(self,actor):
+        pass# hukannzenn
         len=(float(actor.HP)/actor.HP_MAX)*self.CHIP_SIZE
         pygame.draw.line(self.screen, (255, 0, 0), (actor.x*self.CHIP_SIZE,actor.y*self.CHIP_SIZE),(actor.x*self.CHIP_SIZE\
                                                                                                     +len,actor.y*self.CHIP_SIZE),2)
@@ -87,16 +89,17 @@ class pygameWrapper():
 
     def drawMap(self, map, source):
         index = self.getImageIndex(source)
-        for x in xrange(mapX):
-            for y in xrange(mapY):
+        for x in range(int(mapX)):
+            for y in range(int(mapY)):
+
                 if map[y][x] != -1:
                     self.drawSurface(self.imageSources[index][map[y][x]], x, y)
 
     def getImageList(self, filename, transparent=False):
         image = self.loadImage(filename, -1)
         imageList = []
-        for x in xrange(0, image.get_width(), self.CHIP_SIZE):
-            for y in xrange(0, image.get_height(), self.CHIP_SIZE):
+        for x in range(0, image.get_width(), self.CHIP_SIZE):
+            for y in range(0, image.get_height(), self.CHIP_SIZE):
                 surface = pygame.Surface((self.CHIP_SIZE, self.CHIP_SIZE))
                 surface.blit(image, (0, 0), (x, y, self.CHIP_SIZE, self.CHIP_SIZE))
                 if transparent:
@@ -104,6 +107,9 @@ class pygameWrapper():
                 surface.convert()
                 imageList.append(surface)
         return imageList
+    def draw(self):
+
+        pass
 
     def update(self):
 
@@ -115,9 +121,9 @@ class pygameWrapper():
         filename = os.path.join("graphics", filename)
         try:
             image = pygame.image.load(filename)
-        except pygame.error, message:
+        except pygame.error as message:
             logging.error("Can't load a image")
-            raise pygame.error, message
+            raise pygame.error(message)
         image = image.convert()
         return image
 

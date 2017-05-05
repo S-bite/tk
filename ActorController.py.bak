@@ -31,7 +31,7 @@ class ActorController():
         def isOpenWindow(key):
             targetKeys = [K_z, K_c, K_v]
             for targetKey in targetKeys:
-                print(pygame.key.name(targetKey),key[targetKey])
+                print pygame.key.name(targetKey),key[targetKey]
                 if key[targetKey]:
                     return True
             return False
@@ -56,6 +56,7 @@ class ActorController():
             if actor.name=="Player":
                 p=actor
                 break
+        print p
         assert p != -1, "Player not found"
         for actor in actors:
             if actor.act_state==WAIT_KEY:# if actor is player
@@ -70,6 +71,7 @@ class ActorController():
                             break
                     else:
                         isActFinish = actor.action(pressedKeys)
+                        print isActFinish
                         if isActFinish:
                             break
 

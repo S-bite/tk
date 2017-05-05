@@ -58,8 +58,8 @@ class Enemy(Actor):
             if i==0:
                 return 1
             return i
-        yMove = (player.y - self.y) / abs(f(player.y - self.y))
-        xMove = (player.x - self.x) / abs(f(player.x - self.x))
+        yMove = (player.y - self.y) // abs(f(player.y - self.y))
+        xMove = (player.x - self.x) // abs(f(player.x - self.x))
         if is_movalbe(self.y+yMove,self.x+xMove)==0:
             self.x +=xMove
             self.y +=yMove
@@ -86,21 +86,21 @@ class Player(Actor):
         res=is_movalbe(self.y+yMove,self.x+xMove)
         if  res==2:
           #  time.sleep(0.1)
-            stage.appendLog(u"その方向には進めない")
+            stage.appendLog("その方向には進めない")
             return False
         if res==1:
             """
             attack
             """
             res=self.attack(getIdFromPos(self.x+xMove,self.y+yMove))
-            stage.appendLog(u"敵に"+str(res)+u"のダメージを与えた")
+            stage.appendLog("敵に"+str(res)+"のダメージを与えた")
             time.sleep(0.1)
             return False
         char[self.y][self.x] = -1
         self.x += xMove
         self.y += yMove
         if xMove != 0 or yMove != 0:
-            stage.appendLog(str(self.name)+u"は" + str(self.x) + "," + str(self.y) + u"へ移動した")
+            stage.appendLog(str(self.name)+"は" + str(self.x) + "," + str(self.y) + "へ移動した")
         char[self.y][self.x] = self.image
         #stage.drawMap(cutWorldMapToDisplay(worldMap, self.x, self.y, mapX, mapY), source="field")
         #stage.drawMap(cutWorldMapToDisplay(char, self.x, self.y, mapX, mapY), "char")
