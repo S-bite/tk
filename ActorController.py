@@ -59,9 +59,9 @@ class ActorController():
         assert p != -1, "Player not found"
         for actor in actors:
             if actor.act_state==WAIT_KEY:# if actor is player
-                stage.drawMap(cutWorldMapToDisplay(worldMap, actor.x, actor.y, mapX, mapY), source="field")
-                stage.drawMap(cutWorldMapToDisplay(char, actor.x, actor.y, mapX, mapY), "char")
-                stage.update()
+                #stage.drawChips(cutWorldMapToDisplay(worldMap, actor.x, actor.y, mapX, mapY), source="field")
+                #stage.drawChips(cutWorldMapToDisplay(char, actor.x, actor.y, mapX, mapY), "char")
+                #stage.update()
                 while True:
                     pressedKeys=getKey()
                     if isOpenWindow(pressedKeys):
@@ -76,8 +76,10 @@ class ActorController():
                 stage.update()
             if actor.act_state==WAIT:
                 actor.action(p)
-                stage.drawHP(actor)
-                stage.update()
-
+        stage.draw()
+        for actor in actors:
+            if actor!=p:
+                stage.drawHP(actor, p)
+        pygame.display.update()
 
 
