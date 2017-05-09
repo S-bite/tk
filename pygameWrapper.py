@@ -29,7 +29,7 @@ class pygameWrapper():
         self.FONT_SIZE = fontSize
         self.font = pygame.font.Font("meiryo.ttc", self.FONT_SIZE)
         self.logMessage = deque()
-        self.LOG_MAX = self.height/self.FONT_SIZE
+        self.LOG_MAX = self.height//self.FONT_SIZE
         self.LOG_MAX_VISIBLE = logMaxVisible
         self.LOG_MAX_WIDTH = logMaxWidth
         self.CHIP_SIZE = chipSize
@@ -67,11 +67,29 @@ class pygameWrapper():
             self.screen.blit(char, (x * 32, y * 32))
         else:
             self.screen.blit(char, (x, y))
-    def drawHP(self,actor):
-        pass# hukannzenn
+    def drawHP(self,actor,player):
+        if player.x<mapX/2:
+            px=player.x
+        elif player.x>256-mapX:
+            px=player.x-(256-mapX)
+        else:
+            px=10
+
+        if player.x<mapX/2:
+            px=player.x
+        elif player.x>256-mapX:
+            px=player.x-(256-mapX)
+        else:
+            py=7
         len=(float(actor.HP)/actor.HP_MAX)*self.CHIP_SIZE
-        pygame.draw.line(self.screen, (255, 0, 0), (actor.x*self.CHIP_SIZE,actor.y*self.CHIP_SIZE),(actor.x*self.CHIP_SIZE\
-                                                                                                    +len,actor.y*self.CHIP_SIZE),2)
+        dx=px+(actor.x-player.x)
+        dy=py+(actor.y-player.y)
+        pygame.draw.line(self.screen, (255, 0, 0), (dx*self.CHIP_SIZE,dy*self.CHIP_SIZE),(dx*self.CHIP_SIZE\
+                                                                                                    +len,dy*self.CHIP_SIZE),2)
+    def gridToscreen(self,pos,o):
+        
+        pass
+
 
     def drawImage(self, id, x, y, source, x32=True):
         self.drawSurface(self.imageSources[self.getImageIndex(source)][id], x, y, x32)
@@ -87,7 +105,7 @@ class pygameWrapper():
             raise UnboundLocalError
         return index
 
-    def drawMap(self, map, source):
+    def drawChips(self, map, source):
         index = self.getImageIndex(source)
         for x in range(int(mapX)):
             for y in range(int(mapY)):
@@ -108,6 +126,10 @@ class pygameWrapper():
                 imageList.append(surface)
         return imageList
     def draw(self):
+        self.screen.fill((0, 0, 0))
+        self.drawChips(self.mapQueue, "field")
+        self.drawChips(self.charQueue, "char")
+#        self.drawChips(self.mapQueue, "map")
 
         pass
 

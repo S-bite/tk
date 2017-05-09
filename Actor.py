@@ -50,16 +50,17 @@ class Actor():
         self.state = ActorData[10]
         self.x = pos[0]
         self.y = pos[1]
+
         char[self.y][self.x] = self.image
 class Enemy(Actor):
-    def action(self,player):
+    def action(self,target):
         char[self.y][self.x]=-1
         def f(i):
             if i==0:
                 return 1
             return i
-        yMove = (player.y - self.y) // abs(f(player.y - self.y))
-        xMove = (player.x - self.x) // abs(f(player.x - self.x))
+        yMove = (target.y - self.y) // abs(f(target.y - self.y))
+        xMove = (target.x - self.x) // abs(f(target.x - self.x))
         if is_movalbe(self.y+yMove,self.x+xMove)==0:
             self.x +=xMove
             self.y +=yMove
@@ -71,8 +72,8 @@ class Player(Actor):
     def action(self,key):
         return self.move(key)
     def move(self,key):
-        stage.drawMap(cutWorldMapToDisplay(worldMap, self.x, self.y, mapX, mapY), source="field")
-        stage.drawMap(cutWorldMapToDisplay(char, self.x, self.y, mapX, mapY), "char")
+        stage.drawChips(cutWorldMapToDisplay(worldMap, self.x, self.y, mapX, mapY), source="field")
+        stage.drawChips(cutWorldMapToDisplay(char, self.x, self.y, mapX, mapY), "char")
         xMove, yMove = 0, 0
 
         if key[K_UP]:
@@ -102,8 +103,8 @@ class Player(Actor):
         if xMove != 0 or yMove != 0:
             stage.appendLog(str(self.name)+"は" + str(self.x) + "," + str(self.y) + "へ移動した")
         char[self.y][self.x] = self.image
-        #stage.drawMap(cutWorldMapToDisplay(worldMap, self.x, self.y, mapX, mapY), source="field")
-        #stage.drawMap(cutWorldMapToDisplay(char, self.x, self.y, mapX, mapY), "char")
+        #stage.drawChips(cutWorldMapToDisplay(worldMap, self.x, self.y, mapX, mapY), source="field")
+        #stage.drawChips(cutWorldMapToDisplay(char, self.x, self.y, mapX, mapY), "char")
 
         #time.sleep(0.1)
         return True
@@ -116,8 +117,8 @@ class Player(Actor):
                 if actor.HP<0:
                     actors.remove(actor)
                     char[actor.y][actor.x]=-1
-                    stage.drawMap(cutWorldMapToDisplay(worldMap, self.x, self.y, mapX, mapY), source="field")
-                    stage.drawMap(cutWorldMapToDisplay(char, self.x, self.y, mapX, mapY), "char")
+                    stage.drawChips(cutWorldMapToDisplay(worldMap, self.x, self.y, mapX, mapY), source="field")
+                    stage.drawChips(cutWorldMapToDisplay(char, self.x, self.y, mapX, mapY), "char")
                     stage.update()
                 return damage
         return -1
