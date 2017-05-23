@@ -8,6 +8,7 @@ l = stage.getImageList("chars.bmp")
 clock = pygame.time.Clock()
 
 
+
 class mapController():
     def __init__(self):
         self.field = []
