@@ -19,7 +19,7 @@ param={HP=10,STR=3...}
 foo=Actor(param)
 """
 import types
-
+import random as rnd
 class Actor():
     def __init__(self,data={}):
         defaultData={"actState":-1,"actId":-1,"name":"-1","image":-1,"race":"-1","job":"-1","HP_MAX":-1,"HP":-1,
@@ -36,12 +36,23 @@ class Actor():
 
 class Enemy(Actor):
         def __init__(self,data={}):
-            defaultData = {"tactics":{0:"attack",1:"heal",2:"throw",3:"beg"},"neuro":[]}
+            defaultData = {"moveType":0,"dist":3,"target":None,"tactics":{0:["attack",30],1:["heal",20],2:["throw",30],3:["beg",20]},}
             defaultData.update(data)
             data=defaultData
             Actor.__init__(self,data)
 
-         #   checkDict = ["tactics"]
+        def getAction(self):
+            if self.target == None:
+                if self.moveType == 0:
+                    return {"action": "move", "x": rnd.randint(-1, 1), "y": rnd.randint(-1, 1)}
+                if self.moveType == 1:
+                    return {"action": "move", "param": [0, 0]}
+
+            tactics = [self.tactics[i][0] for i in self.tactics]
+            weights = [self.tactics[i][1] for i in self.tactics]
+            return {"action": rnd.choices(tactics, weights)[0], "param": []}
+
+                #   checkDict = ["tactics"]
          #   if [hasattr(self, x) and not isinstance((self, x),types.FunctionType)  for x in checkDict].count(
          #           False) != 0:
          #       raise (BaseException("necessary variable is not defined"))
