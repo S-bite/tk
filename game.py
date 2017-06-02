@@ -1,16 +1,37 @@
 #coding:utf-8
 
-from item import item
+from ActorController import ActorController
+from Actor import Player,Enemy,Actor
+from map import Map
 class game():
-    def __init__(self,m_field,m_item,actorCtr,m_entity):
-        self.field=m_field
-        self.item=m_item
+    def __init__(self,actorCtr,fieldMap):
         self.actorCtr=actorCtr
-        self.entity=m_entity
+        self.fieldMap=fieldMap
 
 
-p=item("portion","drink",10,1)
-s=item("sword","attack",30,-1)
-_=item("None","None",-1,-1)
+actCtr=ActorController()
+p=Player({"SPD":10,"HP":10,"STR":5,"DEF":5,"x":5,"y":5})
+actCtr.addActor(p)
+actCtr.setActorAsPlayer(p)
+actCtr.addActor(Enemy({"SPD":10,"HP":10,"STR":5,"DEF":5,"x":9,"y":9,"dist":1}))
 
+m=Map(10,10)
 
+g=game(actCtr,m)
+for i in range(10):
+    res=g.actorCtr.getAction()
+    print(res)
+    if res["action"]=="player":
+        #put some code!
+        pass
+    if res["action"]=="move":
+        actor=actCtr.actors[res["actId"]]
+        target=actCtr.actors[res["targetId"]]
+        if actor.x > target.x:
+            actor.x-=1
+        else:
+            actor.x+=1
+        if actor.y > target.y:
+            actor.y -= 1
+        else:
+            actor.y+=1

@@ -16,7 +16,7 @@ class ActorController():
 
     def setActorAsPlayer(self,player):
         if player not in self.actors:
-            assert ("actor not in self.actors")
+            assert ("argument is not in self.actors")
         self.player=player
 
     def addActor(self,actor):
@@ -74,13 +74,14 @@ class ActorController():
 
 
 def getRandomParam():
-    return {"HP":1,"job":"test","SPD":rnd.randint(30,60)}
-actCtr=ActorController()
-p=Player({"SPD":15})
-actCtr.addActor(p)
-actCtr.setActorAsPlayer(p)
-actCtr.addActor(Enemy({"SPD":20}))
-print([x.SPD for _,x in actCtr.actors.items()])
-for i in range(100):
-    request=actCtr.getAction()
-    print(request)
+    return {"HP":1,"x":20,"y":2,"job":"test","SPD":rnd.randint(30,60)}
+if __name__=="__main__":
+    actCtr=ActorController()
+    p=Player({"SPD":15,"x":1,"y":2})
+    actCtr.addActor(p)
+    actCtr.setActorAsPlayer(p)
+    actCtr.addActor(Enemy({"SPD":20,"x":2,"y":2}))
+    print([x.SPD for _,x in actCtr.actors.items()])
+    for i in range(100):
+        request=actCtr.getAction()
+        print(request)

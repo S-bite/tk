@@ -44,9 +44,11 @@ class Enemy(Actor):
         def getAction(self):
             if self.target == None:
                 if self.moveType == 0:
-                    return {"action": "move", "x": rnd.randint(-1, 1), "y": rnd.randint(-1, 1)}
+                    return {"action": "move_random",}
                 if self.moveType == 1:
-                    return {"action": "move", "param": [0, 0]}
+                    return {"action": "none",}
+            if max(abs(self.target.x-self.x),abs(self.target.y-self.y)) > self.dist:
+                return {"action": "move","targetId":self.target.actId}
 
             tactics = [self.tactics[i][0] for i in self.tactics]
             weights = [self.tactics[i][1] for i in self.tactics]
