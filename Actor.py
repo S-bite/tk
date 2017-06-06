@@ -36,7 +36,7 @@ class Actor():
 
 class Enemy(Actor):
         def __init__(self,data={}):
-            defaultData = {"moveType":0,"dist":3,"target":None,"tactics":{0:["attack",30],1:["heal",20],2:["throw",30],3:["beg",20]},}
+            defaultData = {"moveType":0,"dist":3,"target":None,"tactics":{0:["attack",80],1:["heal",20],2:["throw",0],3:["beg",0]},}
             defaultData.update(data)
             data=defaultData
             Actor.__init__(self,data)
@@ -52,7 +52,7 @@ class Enemy(Actor):
 
             tactics = [self.tactics[i][0] for i in self.tactics]
             weights = [self.tactics[i][1] for i in self.tactics]
-            return {"action": rnd.choices(tactics, weights)[0], "param": []}
+            return {"action": rnd.choices(tactics, weights)[0],"targetId":self.target.actId,}
 
                 #   checkDict = ["tactics"]
          #   if [hasattr(self, x) and not isinstance((self, x),types.FunctionType)  for x in checkDict].count(
