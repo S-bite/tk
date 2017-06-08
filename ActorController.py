@@ -77,13 +77,10 @@ class ActorController():
 
         self.time = max((self.time + 1) % 1024, 1)
         actor=self.moveQueue.popleft()
-        if type(actor)==Player:
-            return{"actId":actor.actId,"action":"player"}
-        else:
-            res={"actId":actor.actId}
-            res.update(actor.getAction())
+        res={"actId":actor.actId}
+        res.update(actor.getAction())
 
-            return res
+        return res
 
 
 def getRandomParam():

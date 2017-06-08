@@ -42,12 +42,13 @@ class Enemy(Actor):
             Actor.__init__(self,data)
 
         def getAction(self):
+            print (self.target)
             if self.target == None:
                 if self.moveType == 0:
-                    return {"action": "move_random",}
+                    return {"action": "move_random","targetId":self.actId}
                 if self.moveType == 1:
-                    return {"action": "none",}
-            if max(abs(self.target.x-self.x),abs(self.target.y-self.y)) > self.dist:
+                    return {"action": "none","targetId":self.actId}
+            if abs(self.target.x-self.x)+abs(self.target.y-self.y) != self.dist:
                 return {"action": "move","targetId":self.target.actId}
 
             tactics = [self.tactics[i][0] for i in self.tactics]
@@ -63,4 +64,11 @@ class Enemy(Actor):
         pass
 
 class Player(Actor):
-    pass
+    def __init__(self, data={}):
+        Actor.__init__(self, data)
+
+    def getAction(self):
+        if self.target==None:
+            return {"action": "player","targetId":self.actId}
+        else:
+            return {"action": "player", "targetId": self.target.actId}
