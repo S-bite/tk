@@ -46,7 +46,7 @@ class ActorController():
     def delActor(self,delTarget): #actId or Actor どちらでも可
         if type(delTarget)==int:
             delId=delTarget
-        if type(delTarget)==Actor or Enemy or Plaer:
+        if type(delTarget)==Actor or Enemy or Player:
             delId=delTarget.actId
         self.actors.pop(delId)
     def getAction(self):
