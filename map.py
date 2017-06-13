@@ -8,7 +8,7 @@ class Map():
                 self.dest=None
                 self.actor=None
 
-        self.name = ""
+        self.name = name
         if mapData==None:
             self.height = height
             self.width = width
@@ -22,11 +22,17 @@ class Map():
             self.map=[[Chip(isMovable=[True,False][mapData[y][x]]) for x in range(self.width)] for y in range(self.height)]
     def setActor(self,actor):
         self.map[actor.y][actor.x].actor = actor
+        self.map[actor.y][actor.x].isMovable = False
+
     def delActor(self,actor):
         self.map[actor.y][actor.x].actor = None
+        self.map[actor.y][actor.x].isMovable = True
+
     def moveActor(self,actor,y,x):
         self.map[actor.y][actor.x].actor=None
+        self.map[actor.y][actor.x].isMovable=True
         self.map[y][x].actor=actor
+        self.map[y][x].isMovable = False
 if __name__=="__main__":
     m=Map(20,10)
 

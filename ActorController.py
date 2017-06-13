@@ -12,7 +12,11 @@ class ActorController():
         self.moveQueue=deque()
         self.player=None
         self.time=1
-        pass
+
+    def updateTarget(self,target):
+        for _,actor in self.actors.items():
+            if actor!=target:
+                actor.target=target
 
     def setActorAsPlayer(self,player):
         if player not in self.actors:

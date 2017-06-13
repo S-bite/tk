@@ -49,6 +49,7 @@ class Enemy(Actor):
                 if self.moveType == 1:
                     return {"action": "none","targetId":self.actId}
             if abs(self.target.x-self.x)+abs(self.target.y-self.y) != self.dist:
+                print(self.target.x,self.target.y,abs(self.target.x-self.x)+abs(self.target.y-self.y),self.dist)
                 return {"action": "move","targetId":self.target.actId}
 
             tactics = [self.tactics[i][0] for i in self.tactics]

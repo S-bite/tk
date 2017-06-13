@@ -46,20 +46,28 @@ class game():
                     for y in range(self.fieldMap.height):
                         s=""
                         for x in range(self.fieldMap.width):
-                            point=self.fieldMap.map[y][x]
-                            a=point.actor
+                            p=self.fieldMap.map[y][x]
+                            a=p.actor
                             if a!=None:
                                 s+=a.name[0]
-                            elif point.dest!=None:
+                            elif p.dest!=None:
                                 s+="/"
                             else :
-                                if point.isMovable:
+                                if p.isMovable:
                                     s+="."
                                 else:
                                     s+="#"
                         print (s)
                 if cmd[0]=="t":
                     player.target=self.actorCtr.actors[int(cmd[1])]
+                if cmd[0]=="w":
+
+                    self.fieldMap.moveActor(player, int(cmd[2]), int(cmd[1]))
+                    player.x=int(cmd[1])
+                    player.y=int(cmd[2])
+                    break
+                if cmd[0]=="n":
+                    break
                 if cmd[0]=="s":
                     print(player.name,player.HP,player.STR,player.DEF)
                 if cmd[0]=="f":
@@ -79,6 +87,34 @@ class game():
                                 self.actorCtr.delActor(player.target)
                             player.target = None
                         break
+                if cmd[0]=="g":
+                    p=self.fieldMap.map[self.actorCtr.player.y][self.actorCtr.player.y]
+                    if p.dest!=None:
+                        _p=self.actorCtr.player
+                        print("move",p.dest[0])
+                        index=None
+                        print(self.fieldIndex)
+                        for _index in self.fieldIndex:
+                            if _index[0]==p.dest[0]:
+                                index=_index
+                        if index==None:
+                            Exception("index not found")
+                        print(index)
+                        self.actorCtr=index[2]
+                        self.fieldMap=index[1]
+                        #player != actors
+                        self.actorCtr.player=_p
+                        self.actorCtr.actors[self.actorCtr.player.actId]=_p
+                        self.actorCtr.player.x=int(p.dest[1])
+                        self.actorCtr.player.y=int(p.dest[2])
+                        self.actorCtr.updateTarget(_p)
+
+                        for _, actor in self.actorCtr.actors.items():
+                            self.fieldMap.setActor(actor)
+                        break
+                    else:
+                        print("no port found")
+
                 if cmd[0]=="q":
                     exit(0)
         elif action == "move":
@@ -154,9 +190,29 @@ room1Map=Map("room1",mapData=l)
 room1Map.map[1][1].dest=["room2",8,8]
 
 
+room2Act=ActorController()
+p=Player({"name":"Player","SPD":20,"HP":10,"STR":15,"DEF":5,"x":5,"y":5})
+room2Act.addActor(p)
+room2Act.setActorAsPlayer(p)
+room2Act.addActor(Enemy({"name":"bat","SPD":10,"HP":5,"STR":10,"DEF":8,"x":1,"y":1,"dist":1}),target=room2Act.player)
+room2Act.addActor(Enemy({"name":"bat","SPD":10,"HP":5,"STR":10,"DEF":8,"x":8,"y":1,"dist":1}),target=room2Act.player)
+l=[
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 0, 0, 1, 1, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 
+]
+room2Map=Map("room2",mapData=l)
+room2Map.map[8][8].dest=["room1",1,1]
 
-g=game([(room1Map,room1Act)],0)
+g=game([(room1Map,room1Act),(room2Map,room2Act)],1)
 
 for i in range(100):
     res=g.actorCtr.getAction()
