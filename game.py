@@ -3,6 +3,8 @@
 from ActorController import ActorController
 from Actor import Player,Enemy,Actor
 from map import Map
+from input import key
+
 class game():
     def __init__(self,fieldIndex=[],currentIndex=0):
         self.fieldIndex=[]
@@ -13,24 +15,61 @@ class game():
         for _,actor in self.actorCtr.actors.items():
             self.fieldMap.setActor(actor)
     def exeAct(self,action,actorId,targetId):
+        def killActor(actor,target):
+            self.fieldMap.delActor(target)
+            if target in self.actorCtr.moveQueue:
+                self.actorCtr.moveQueue.remove(target)
+            if target == self.actorCtr.player:
+                self.actorCtr.delActorAsPlayer(target)
+            else:
+                self.actorCtr.delActor(target)
+            actor.target = None
+        def showMap():
+            for y in range(self.fieldMap.height):
+                s = ""
+                for x in range(self.fieldMap.width):
+                    p = self.fieldMap.map[y][x]
+                    a = p.actor
+                    if a != None:
+                        s += a.name[0]
+                    elif p.dest != None:
+                        s += "/"
+                    else:
+                        if p.isMovable:
+                            s += "."
+                        else:
+                            s += "#"
+                print(s)
+
+        print("\x1b[2J\x1b[H")
+        showMap()
+        #print(msg) ot something like that!
         actor=self.actorCtr.actors[actorId]
         target=self.actorCtr.actors[targetId]
         print("action",action)
         if action == "player":
             player=actor
+            keyBoard=key()
+
             while True:
-                cmd = input("action:").split(" ")
+                pushed=keyBoard.getInput()
+                if len(pushed)==1:
+                    cmd = [pushed[0]]
+                else:
+                    if pushed[0]=="\x1b":
+                        cmd=["m",pushed[2]]
+
                 if cmd[0] == "m":
                     mx=0
                     my=0
                     dir = cmd[1]
-                    if "u" in dir:
+                    if "A" in dir: #up
                         my -= 1
-                    if "d" in dir:
+                    if "B" in dir:#down
                         my += 1
-                    if "r" in dir:
+                    if "C" in dir:#right
                         mx += 1
-                    if "l" in dir:
+                    if "D" in dir:#left
                         mx -= 1
                     if self.fieldMap.map[player.y+my][player.x+mx].isMovable==True:
                         self.fieldMap.moveActor(player,player.y+my,player.x+mx)
@@ -43,25 +82,12 @@ class game():
                     for _,a in g.actorCtr.actors.items():
                         print(a.actId,a.name,a.x,a.y,a.HP)
                 if cmd[0]=="M":
-                    for y in range(self.fieldMap.height):
-                        s=""
-                        for x in range(self.fieldMap.width):
-                            p=self.fieldMap.map[y][x]
-                            a=p.actor
-                            if a!=None:
-                                s+=a.name[0]
-                            elif p.dest!=None:
-                                s+="/"
-                            else :
-                                if p.isMovable:
-                                    s+="."
-                                else:
-                                    s+="#"
-                        print (s)
+                    showMap()
                 if cmd[0]=="t":
-                    player.target=self.actorCtr.actors[int(cmd[1])]
+                    print("select target")
+                    t=int(keyBoard.getInput()[0])
+                    player.target=self.actorCtr.actors[t]
                 if cmd[0]=="w":
-
                     self.fieldMap.moveActor(player, int(cmd[2]), int(cmd[1]))
                     player.x=int(cmd[1])
                     player.y=int(cmd[2])
@@ -78,17 +104,10 @@ class game():
                         player.target.HP-=int((player.STR//target.DEF)*3*(0.8**dist))
                         print(player.target.HP)
                         if player.target.HP < 0:
-                            self.fieldMap.delActor(player.target)
-                            if player.target in self.actorCtr.moveQueue:
-                                self.actorCtr.moveQueue.remove(player.target)
-                            if player.target == self.actorCtr.player:
-                                self.actorCtr.delActorAsPlayer(player.target)
-                            else:
-                                self.actorCtr.delActor(player.target)
-                            player.target = None
+                            killActor(player,player.target)
                         break
                 if cmd[0]=="g":
-                    p=self.fieldMap.map[self.actorCtr.player.y][self.actorCtr.player.y]
+                    p=self.fieldMap.map[self.actorCtr.player.y][self.actorCtr.player.x]
                     if p.dest!=None:
                         _p=self.actorCtr.player
                         print("move",p.dest[0])
@@ -102,7 +121,6 @@ class game():
                         print(index)
                         self.actorCtr=index[2]
                         self.fieldMap=index[1]
-                        #player != actors
                         self.actorCtr.player=_p
                         self.actorCtr.actors[self.actorCtr.player.actId]=_p
                         self.actorCtr.player.x=int(p.dest[1])
@@ -116,6 +134,7 @@ class game():
                         print("no port found")
 
                 if cmd[0]=="q":
+                    print("\x1b[2J\x1b[H")
                     exit(0)
         elif action == "move":
             dist = abs(actor.x - target.x) + abs(actor.y - target.y)
@@ -168,21 +187,21 @@ class game():
 
 
 room1Act=ActorController()
-p=Player({"name":"Player","SPD":20,"HP":10,"STR":15,"DEF":5,"x":5,"y":5})
+p=Player({"name":"Player","SPD":20,"HP":100,"STR":150,"DEF":5,"x":5,"y":5})
 room1Act.addActor(p)
 room1Act.setActorAsPlayer(p)
-room1Act.addActor(Enemy({"name":"rat","SPD":10,"HP":10,"STR":5,"DEF":5,"x":9,"y":9,"dist":1}),target=room1Act.player)
+room1Act.addActor(Enemy({"name":"rat","SPD":10,"HP":10,"STR":5,"DEF":5,"x":8,"y":1,"dist":1}),target=room1Act.player)
 room1Act.addActor(Enemy({"name":"rat","SPD":10,"HP":10,"STR":5,"DEF":5,"x":3,"y":4,"dist":1}),target=room1Act.player)
 l=[
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
     [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
-    [1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 1, 1, 0, 0, 0, 0, 0, 1],
+    [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
     [1, 0, 0, 0, 0, 0, 1, 1, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 1, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 
 ]
@@ -191,7 +210,7 @@ room1Map.map[1][1].dest=["room2",8,8]
 
 
 room2Act=ActorController()
-p=Player({"name":"Player","SPD":20,"HP":10,"STR":15,"DEF":5,"x":5,"y":5})
+p=Player({"name":"Player","SPD":20,"HP":100,"STR":150,"DEF":5,"x":5,"y":5})
 room2Act.addActor(p)
 room2Act.setActorAsPlayer(p)
 room2Act.addActor(Enemy({"name":"bat","SPD":10,"HP":5,"STR":10,"DEF":8,"x":1,"y":1,"dist":1}),target=room2Act.player)
@@ -214,7 +233,7 @@ room2Map.map[8][8].dest=["room1",1,1]
 
 g=game([(room1Map,room1Act),(room2Map,room2Act)],1)
 
-for i in range(100):
+while True:
     res=g.actorCtr.getAction()
     g.exeAct(res["action"],res["actId"],res["targetId"])
     for _,actor in g.actorCtr.actors.items():
