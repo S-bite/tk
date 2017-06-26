@@ -14,7 +14,7 @@ class game():
         self.fieldMap=fieldIndex[currentIndex][0]
         for _,actor in self.actorCtr.actors.items():
             self.fieldMap.setActor(actor)
-        
+
     def exeAct(self,action,actorId,targetId):
         def killActor(actor,target):
             self.fieldMap.delActor(target)
