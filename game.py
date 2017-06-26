@@ -2,7 +2,7 @@
 
 from ActorController import ActorController
 from Actor import Player,Enemy,Actor
-from map import Map
+from field import field
 from input import key
 
 class game():
@@ -14,6 +14,7 @@ class game():
         self.fieldMap=fieldIndex[currentIndex][0]
         for _,actor in self.actorCtr.actors.items():
             self.fieldMap.setActor(actor)
+        
     def exeAct(self,action,actorId,targetId):
         def killActor(actor,target):
             self.fieldMap.delActor(target)
@@ -24,18 +25,23 @@ class game():
             else:
                 self.actorCtr.delActor(target)
             actor.target = None
+        def attack(actor,target):
+            target.HP -= int((actor.STR // target.DEF) * 3)
+            print(actor.name,"attacks",target.name)
+            if target.HP < 0:
+                killActor(actor, target)
         def showMap():
             for y in range(self.fieldMap.height):
                 s = ""
                 for x in range(self.fieldMap.width):
-                    p = self.fieldMap.map[y][x]
-                    a = p.actor
+                    p = self.fieldMap.getChipInfo(x,y)
+                    a=p["actor"]
                     if a != None:
                         s += a.name[0]
-                    elif p.dest != None:
+                    elif p["door"] != None:
                         s += "/"
                     else:
-                        if p.isMovable:
+                        if p["isMovable"]:
                             s += "."
                         else:
                             s += "#"
@@ -43,7 +49,7 @@ class game():
 
         print("\x1b[2J\x1b[H")
         showMap()
-        #print(msg) ot something like that!
+        #print(msg) or something like that!
         actor=self.actorCtr.actors[actorId]
         target=self.actorCtr.actors[targetId]
         print("action",action)
@@ -71,11 +77,14 @@ class game():
                         mx += 1
                     if "D" in dir:#left
                         mx -= 1
-                    if self.fieldMap.map[player.y+my][player.x+mx].isMovable==True:
+                    if self.fieldMap.isMovable(player.x+mx,player.y+my)==True:
                         self.fieldMap.moveActor(player,player.y+my,player.x+mx)
                         player.x+=mx
                         player.y+=my
                         break
+                    elif self.fieldMap.actor[player.y+my][player.x+mx]!=None:
+                        target=self.fieldMap.actor[player.y+my][player.x+mx]
+                        attack(player,target)
                     else:
                         print("you can't move there")
                 if cmd[0]=="l":
@@ -107,14 +116,14 @@ class game():
                             killActor(player,player.target)
                         break
                 if cmd[0]=="g":
-                    p=self.fieldMap.map[self.actorCtr.player.y][self.actorCtr.player.x]
-                    if p.dest!=None:
+                    p=self.fieldMap.getChipInfo(self.actorCtr.player.x,self.actorCtr.player.y)
+                    if p["door"]!=None:
                         _p=self.actorCtr.player
-                        print("move",p.dest[0])
+                        print("move",p["door"][0])
                         index=None
                         print(self.fieldIndex)
                         for _index in self.fieldIndex:
-                            if _index[0]==p.dest[0]:
+                            if _index[0]==p["door"][0]:
                                 index=_index
                         if index==None:
                             Exception("index not found")
@@ -123,8 +132,8 @@ class game():
                         self.fieldMap=index[1]
                         self.actorCtr.player=_p
                         self.actorCtr.actors[self.actorCtr.player.actId]=_p
-                        self.actorCtr.player.x=int(p.dest[1])
-                        self.actorCtr.player.y=int(p.dest[2])
+                        self.actorCtr.player.x=int(p["door"][1])
+                        self.actorCtr.player.y=int(p["door"][2])
                         self.actorCtr.updateTarget(_p)
 
                         for _, actor in self.actorCtr.actors.items():
@@ -163,7 +172,7 @@ class game():
                         my += 1
                     else:
                         my -= 1
-            if self.fieldMap.map[actor.y+my][actor.x+mx].isMovable==True:
+            if self.fieldMap.isMovable(actor.x+mx,actor.y+my)==True:
                 self.fieldMap.moveActor(actor,actor.y+my,actor.x+mx)
                 actor.x+=mx
                 actor.y+=my
@@ -181,8 +190,6 @@ class game():
                         g.actorCtr.delActor(target)
             else:
                 print(actor.name, "attacks but too far.")
-
-
 
 
 
@@ -205,9 +212,8 @@ l=[
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 
 ]
-room1Map=Map("room1",mapData=l)
-room1Map.map[1][1].dest=["room2",8,8]
-
+room1Map=field(name="room1")
+room1Map.door[1][1]=["room2",8,8]
 
 room2Act=ActorController()
 p=Player({"name":"Player","SPD":20,"HP":100,"STR":150,"DEF":5,"x":5,"y":5})
@@ -228,8 +234,9 @@ l=[
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 
 ]
-room2Map=Map("room2",mapData=l)
-room2Map.map[8][8].dest=["room1",1,1]
+room2Map=field(name="room2")
+room2Map.createBoarder()
+room2Map.door[8][8]=["room1",1,1]
 
 g=game([(room1Map,room1Act),(room2Map,room2Act)],1)
 
