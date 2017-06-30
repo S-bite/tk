@@ -4,6 +4,8 @@ from ActorController import ActorController
 from Actor import Player,Enemy,Actor
 from field import field
 from input import key
+import sdl2.ext
+sdl2.ext.init()
 
 class game():
     def __init__(self,fieldIndex=[],currentIndex=0):
@@ -49,6 +51,7 @@ class game():
 
         print("\x1b[2J\x1b[H")
         showMap()
+        print(sdl2.ext.get_events())
         #print(msg) or something like that!
         actor=self.actorCtr.actors[actorId]
         target=self.actorCtr.actors[targetId]
@@ -199,19 +202,6 @@ room1Act.addActor(p)
 room1Act.setActorAsPlayer(p)
 room1Act.addActor(Enemy({"name":"rat","SPD":10,"HP":10,"STR":5,"DEF":5,"x":8,"y":1,"dist":1}),target=room1Act.player)
 room1Act.addActor(Enemy({"name":"rat","SPD":10,"HP":10,"STR":5,"DEF":5,"x":3,"y":4,"dist":1}),target=room1Act.player)
-l=[
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 1, 1, 0, 0, 0, 0, 0, 1],
-    [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
-    [1, 0, 0, 0, 0, 0, 1, 1, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-
-]
 room1Map=field(name="room1")
 room1Map.door[1][1]=["room2",8,8]
 
@@ -221,19 +211,7 @@ room2Act.addActor(p)
 room2Act.setActorAsPlayer(p)
 room2Act.addActor(Enemy({"name":"bat","SPD":10,"HP":5,"STR":10,"DEF":8,"x":1,"y":1,"dist":1}),target=room2Act.player)
 room2Act.addActor(Enemy({"name":"bat","SPD":10,"HP":5,"STR":10,"DEF":8,"x":8,"y":1,"dist":1}),target=room2Act.player)
-l=[
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 0, 0, 1, 1, 1, 1],
-    [1, 1, 0, 0, 0, 0, 0, 0, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 
-]
 room2Map=field(name="room2")
 room2Map.createBoarder()
 room2Map.door[8][8]=["room1",1,1]

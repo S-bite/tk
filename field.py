@@ -3,7 +3,7 @@ import random
 
 
 class field():
-    def __init__(self, x=100, y=30,name="field",terrainData=None):
+    def __init__(self, x=10, y=10,name="field",terrainData=None):
         def generateList(x, y, default):
             if type(default) != type(object):
                 return [[default for _ in range(x)] for __ in range(y)]
