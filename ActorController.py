@@ -31,7 +31,7 @@ class ActorController():
         def isOpenWindow(key):
             targetKeys = [K_z, K_c, K_v]
             for targetKey in targetKeys:
-                print(pygame.key.name(targetKey),key[targetKey])
+               # print(pygame.key.name(targetKey),key[targetKey])
                 if key[targetKey]:
                     return True
             return False

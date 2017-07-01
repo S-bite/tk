@@ -107,8 +107,9 @@ class pygameWrapper():
                 surface.convert()
                 imageList.append(surface)
         return imageList
-    def draw(self):
-
+    def draw(self,logOnly=False):
+        self.drawMap(self.mapQueue,"map")
+        self.drawMap(self.charQueue, "char")
         pass
 
     def update(self):
@@ -121,6 +122,7 @@ class pygameWrapper():
         filename = os.path.join("graphics", filename)
         try:
             image = pygame.image.load(filename)
+
         except pygame.error as message:
             logging.error("Can't load a image")
             raise pygame.error(message)
