@@ -8,6 +8,7 @@ l = stage.getImageList("chars.bmp")
 clock = pygame.time.Clock()
 
 
+
 class mapController():
     def __init__(self):
         self.field = []
@@ -45,13 +46,15 @@ def main():
         stage.prepareRedraw()
         # print cutWorldMapToDisplay(worldMap, p.x,p.y,mapX,mapY)
 
-        stage.drawMap(cutWorldMapToDisplay(worldMap, p.x, p.y, mapX, mapY), source="field")
-        stage.drawMap(cutWorldMapToDisplay(char, p.x, p.y, mapX, mapY), "char")
+        stage.mapQueue=cutWorldMapToDisplay(worldMap, p.x, p.y, mapX, mapY)
+        stage.charQueue=cutWorldMapToDisplay(char, p.x, p.y, mapX, mapY)
+        stage.draw()
         accn.action()
-        #stage.drawMap(cutWorldMapToDisplay(worldMap, p.x, p.y, mapX, mapY), source="field")
-        #stage.drawMap(cutWorldMapToDisplay(char, p.x, p.y, mapX, mapY), "char")
+        #stage.drawChips(cutWorldMapToDisplay(worldMap, p.x, p.y, mapX, mapY), source="field")
+        #stage.drawChips(cutWorldMapToDisplay(char, p.x, p.y, mapX, mapY), "char")
         clock.tick(60)
-
+        #stage.draw()
 
 if __name__ == '__main__':
+
     main()
