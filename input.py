@@ -48,5 +48,5 @@ if __name__=="__main__":
         getch = key()
         x = getch.getInput()
         print(x)
-        if x==["q"]:
+        if x==[b"q"]:
             break

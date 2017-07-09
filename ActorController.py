@@ -18,7 +18,6 @@ class ActorController():
             if actor!=target:
                 actor.target=target
 
-<<<<<<< HEAD
     def action(self):
         def isOpenWindow(key):
             targetKeys = [K_z, K_c, K_v]
@@ -47,7 +46,6 @@ class ActorController():
         for actor in actors:
             if actor.name=="Player":
                 p=actor
-=======
     def setActorAsPlayer(self,player):
         if player not in self.actors:
             assert ("argument is not in self.actors")
@@ -107,7 +105,6 @@ class ActorController():
             else:
                 movables.sort(reverse=True,key=lambda x:x[1])
                 self.moveQueue+=[self.actors[x[0]]for x in movables]
->>>>>>> 1c026669e5de8b51612f587d4856747080193114
                 break
 
         self.time = max((self.time + 1) % 1024, 1)
