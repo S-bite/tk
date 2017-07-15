@@ -18,34 +18,7 @@ class ActorController():
             if actor!=target:
                 actor.target=target
 
-    def action(self):
-        def isOpenWindow(key):
-            targetKeys = [K_z, K_c, K_v]
-            for targetKey in targetKeys:
-               # print(pygame.key.name(targetKey),key[targetKey])
-                if key[targetKey]:
-                    return True
-            return False
-        def getKey():
-            while True:
-                pygame.time.wait(80)
-                res = pygame.event.get()
-                for event in res:
-                    if event.type == QUIT:
-                        pygame.quit()
-                        sys.exit()
-                        # pygame.key.set_repeat(300)
-                        #                    pygame.event.clear()
-                pressedKeys = pygame.key.get_pressed()
-                pressedMods = pygame.key.get_mods()
-                if np.sum(pressedKeys) > bin(pressedMods).count("1"):
-                    break
-            return pressedKeys
-        p=-1
-        actors.sort(key=lambda actor: actor.SPD)
-        for actor in actors:
-            if actor.name=="Player":
-                p=actor
+
     def setActorAsPlayer(self,player):
         if player not in self.actors:
             assert ("argument is not in self.actors")
@@ -78,27 +51,21 @@ class ActorController():
     def delActor(self,delTarget): #actId or Actor どちらでも可
         if type(delTarget)==int:
             delId=delTarget
-        if type(delTarget)==Actor or Enemy or Player:
+        elif type(delTarget)==Actor or Enemy or Player:
             delId=delTarget.actId
         self.actors.pop(delId)
-    def getAction(self):
-        if len(self.moveQueue)!=0:
-            actor = self.moveQueue.popleft()
-            if type(actor) == Player:
-                return {"actId": actor.actId, "action": "player"}
-            else:
-                res = {"actId": actor.actId}
-                res.update(actor.getAction())
-                return res
 
+    def tickForMoveQueue(self):
+        print(self.moveQueue)
+        if self.moveQueue:
+            return
         idList=[[x.actId,x.SPD] for _,x in self.actors.items()]
         movables = []
+        print(idList)
         while True:
-
             for actor in idList:
                 if self.time%(1023//actor[1])==0 and actor not in movables:
                     movables.append(actor)
-                #    print(self.time,1023//actor[1])
             if len(movables)==0:
                 self.time=max((self.time+1)%1024,1)
                 continue
@@ -106,9 +73,17 @@ class ActorController():
                 movables.sort(reverse=True,key=lambda x:x[1])
                 self.moveQueue+=[self.actors[x[0]]for x in movables]
                 break
-
         self.time = max((self.time + 1) % 1024, 1)
+        return 0
+
+    def getNextActor(self):
+        self.tickForMoveQueue()
+        return self.moveQueue[0]
+    def getAction(self):
+        self.tickForMoveQueue()
+        print(self.moveQueue)
         actor=self.moveQueue.popleft()
+        print(actor.name)
         res={"actId":actor.actId}
         res.update(actor.getAction())
 
