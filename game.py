@@ -8,14 +8,15 @@ import sdl2.ext
 sdl2.ext.init()
 
 class game():
-    def __init__(self,fieldIndex=[],currentIndex=0):
-        self.fieldIndex=[]
-        for index in fieldIndex:
-            self.fieldIndex.append([index[0].name,index[0],index[1]])
-        self.actorCtr=fieldIndex[currentIndex][1]
-        self.fieldMap=fieldIndex[currentIndex][0]
+    def __init__(self,stageDatas,currentStage=0):
+        self.stageDatas=[]
+        for stageData in stageDatas:
+            self.stageDatas.append([stageData["field"].name,stageData["field"],stageData["ActorController"]])
+        self.actorCtr=stageDatas[currentStage]["ActorController"]
+        self.fieldMap=stageDatas[currentStage]["field"]
         for _,actor in self.actorCtr.actors.items():
             self.fieldMap.setActor(actor)
+
     def step(self):
         res=self.actorCtr.getAction()
         self.exeAct(res["action"], res["actId"], res["targetId"])
@@ -126,12 +127,10 @@ class game():
                     p=self.fieldMap.getChipInfo(self.actorCtr.player.x,self.actorCtr.player.y)
                     if p["door"]!=None:
                         _p=self.actorCtr.player
-                        print("move",p["door"][0])
                         index=None
-                        print(self.fieldIndex)
-                        for _index in self.fieldIndex:
-                            if _index[0]==p["door"][0]:
-                                index=_index
+                        for stageaData in self.stageDatas:
+                            if stageaData[0]==p["door"][0]:
+                                index=stageaData
                         if index==None:
                             Exception("index not found")
                         print(index)
@@ -220,7 +219,7 @@ if __name__=="__main__":
     room2Map.createBoarder()
     room2Map.door[8][8]=["room1",1,1]
 
-    g=game([(room1Map,room1Act),(room2Map,room2Act)],1)
+    g=game([{"field":room1Map,"ActorController":room1Act},{"field":room2Map,"ActorController":room2Act}],1)
 
     while True:
         g.step()

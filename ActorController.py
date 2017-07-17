@@ -35,8 +35,6 @@ class ActorController():
         delId=player.actId
         self.actors.pop(delId)
 
-
-
     def addActor(self,actor,target=None):
         l=[i for i in self.actors]
         newId=-1
@@ -47,6 +45,9 @@ class ActorController():
         actor.target= target
         actor.actId = newId
         self.actors.update({newId: actor})
+    def addActorAsPlayer(self,actor):
+        self.addActor(actor)
+        self.setActorAsPlayer(actor)
 
     def delActor(self,delTarget): #actId or Actor どちらでも可
         if type(delTarget)==int:
