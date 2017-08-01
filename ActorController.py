@@ -98,7 +98,7 @@ if __name__=="__main__":
     p=Player({"SPD":15,"x":1,"y":2})
     actCtr.addActor(p)
     actCtr.setActorAsPlayer(p)
-    actCtr.addActor(Enemy({"SPD":20,"x":2,"y":2}),target=self.player)
+    actCtr.addActor(Enemy({"SPD":20,"x":2,"y":2}),target=actCtr.player)
     print([x.SPD for _,x in actCtr.actors.items()])
     for i in range(100):
         request=actCtr.getAction()

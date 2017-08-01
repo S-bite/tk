@@ -4,8 +4,19 @@ from ActorController import ActorController
 from Actor import Player,Enemy,Actor
 from field import field
 from input import key
-import sdl2.ext
-sdl2.ext.init()
+import enum
+import pyglet.window.key
+
+class screenStateEnum(enum.IntEnum):
+    ON_MAP=0
+    ON_CHAT=1
+    ON_INVENTORY=2
+class mapHandler():
+    pass
+class inventoryHandler():
+    pass
+class chatHandler():
+    pass
 
 class game():
     def __init__(self,stageDatas,currentStage=0):
@@ -14,12 +25,19 @@ class game():
             self.stageDatas.append([stageData["field"].name,stageData["field"],stageData["ActorController"]])
         self.actorCtr=stageDatas[currentStage]["ActorController"]
         self.fieldMap=stageDatas[currentStage]["field"]
+        self.screen_state=screenStateEnum.ON_MAP
         for _,actor in self.actorCtr.actors.items():
             self.fieldMap.setActor(actor)
 
-    def step(self):
-        res=self.actorCtr.getAction()
-        self.exeAct(res["action"], res["actId"], res["targetId"])
+    def step(self,keys):
+        if self.screen_state==screenStateEnum.ON_MAP:
+            print("ON_MAP")
+        if "UP" in keys:
+            #movehandler.up()
+
+            print("UP")
+
+        return 0
 
     def exeAct(self,action,actorId,targetId):
         def killActor(actor,target):
@@ -55,7 +73,6 @@ class game():
 
         print("\x1b[2J\x1b[H")
         showMap()
-        print(sdl2.ext.get_events())
         #print(msg) or something like that!
         actor=self.actorCtr.actors[actorId]
         target=self.actorCtr.actors[targetId]
