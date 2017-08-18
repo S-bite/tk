@@ -23,7 +23,7 @@ class GUI():
         for k in self.keys:
             if  self.keys[k]==True:
                 res.append(key._key_names[k])
-        if res:
+        if True:#res:
             self.game.step(res)
             print(res)
             time.sleep(0.25)
@@ -31,15 +31,27 @@ class GUI():
         pyglet.clock.schedule_interval(self.update, 1/30)
         pyglet.clock.schedule_interval(self.input, 1/100)
         pyglet.app.run()
-room1Act=ActorController()
+room1_act=ActorController()
 p=Player({"name":"Player","SPD":20,"HP":100,"STR":150,"DEF":5,"x":5,"y":5})
-room1Act.addActorAsPlayer(p)
-room1Act.addActor(Enemy({"name":"rat","SPD":10,"HP":10,"STR":5,"DEF":5,"x":8,"y":1,"dist":1}),target=room1Act.player)
-room1Act.addActor(Enemy({"name":"rat","SPD":10,"HP":10,"STR":5,"DEF":5,"x":3,"y":4,"dist":1}),target=room1Act.player)
+room1_act.add_actor_as_player(p)
+room1_act.add_actor(Enemy({"name":"rat","SPD":10,"HP":10,"STR":5,"DEF":5,"x":8,"y":1,"dist":1}),target=room1_act.player)
+room1_act.add_actor(Enemy({"name":"rat","SPD":10,"HP":10,"STR":5,"DEF":5,"x":3,"y":4,"dist":1}),target=room1_act.player)
 
-room1Map=field(name="room1")
-room1Map.door[1][1]=["room2",8,8]
+room1_map=field(name="room1")
+room1_map.door[1][1]=["room2",8,8]
 
-gm=game([{"field":room1Map,"ActorController":room1Act}])
+room2_act = ActorController()
+p = Player({"name": "Player", "SPD": 20, "HP": 100, "STR": 150, "DEF": 5, "x": 5, "y": 5})
+room2_act.add_actor_as_player(p)
+room2_act.add_actor(Enemy({"name": "bat", "SPD": 10, "HP": 5, "STR": 10, "DEF": 8, "x": 1, "y": 1, "dist": 1}),
+                    target=room2_act.player)
+room2_act.add_actor(Enemy({"name": "bat", "SPD": 10, "HP": 5, "STR": 10, "DEF": 8, "x": 8, "y": 1, "dist": 1}),
+                    target=room2_act.player)
+
+room2_map = field(name="room2")
+room2_map.createBoarder()
+room2_map.door[8][8] = ["room1", 1, 1]
+
+gm = game([{"field": room1_map, "ActorController": room1_act}, {"field": room2_map, "ActorController": room2_act}], 1)
 g=GUI(gm)
 g.run()
