@@ -1,5 +1,4 @@
 *.ttc
-/graphics/*
 !/graphics/.gitkeep
 *.pyc
 /.idea
