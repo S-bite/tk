@@ -58,12 +58,12 @@ class ActorController():
         self.actors.pop(del_id)
 
     def tick_for_move_queue(self):
-        print(self.move_queue)
+        #print(self.move_queue)
         if self.move_queue:
             return 0
         id_list=[[x.act_id,x.SPD] for _,x in self.actors.items()]
         movables = []
-        print(id_list)
+        #print(id_list)
         while True:
             for actor in id_list:
                 if self.time%(1023//actor[1])==0 and actor not in movables:

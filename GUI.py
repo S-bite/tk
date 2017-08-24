@@ -29,14 +29,16 @@ class GUI():
     def update(self,_):
         pass
 
-
+    @window.event
     def input(self,_):
         res=[]
         for k in self.keys:
             if  self.keys[k]==True:
                 res.append(key._key_names[k])
-        if res:
+        if True:
             game_data=self.game.step(res)
+            if game_data==-1:
+                return
             self.window.clear()
             for x,_ in enumerate(game_data.field_map.terrain):
                 for y,terrain in enumerate(_):
