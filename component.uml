@@ -1,4 +1,3 @@
-
 @startuml
 
 class Item{
@@ -55,6 +54,7 @@ class ActorController{
 class World{
     -- Variable --
     list[Map] maps
+    list[ActorController] actor_controllers
     -- Function --
     transit_map
 }
