@@ -1,0 +1,95 @@
+@startuml
+
+class Item{
+    -- Variable --
+    
+    -- Function --
+}
+class Actor{
+    -- Variable --
+    int HP
+    int STR
+    int DEF
+    ...
+    list[Item] items
+}
+class Chip{
+    -- Variable --
+    enum　terrain
+    list[Item] items
+}
+
+class Map{
+    -- Variable --
+    list[Chip] map
+    int id_
+    str trainsition_target
+    -- Function --
+    set_transition_target
+    set_items
+    set_terrain
+    add_item
+}
+class NPC{
+    -- Variable --
+    -- Function --
+    select_act
+}
+class Player{
+    -- Variable --
+    -- Function --
+}
+
+class ActorController{
+    -- Variables --
+    list[Actor] actors
+    -- Function --
+    get_act
+    get_next_actor
+    add_actor
+    remove_actor
+
+}
+
+class World{
+    -- Variable --
+    list[Map] maps
+    list[ActorController] actor_controllers
+    -- Function --
+    transit_map
+}
+
+class Game{
+    -- Variable --
+    World world
+    long int time
+    -- Function --
+    tick_world
+
+
+}
+class GUI{
+    -- Variable --
+    -- Function --
+    draw_game_view
+    get_input
+    tick_game
+    
+}
+
+Item --* Actor
+Item --* Chip
+Actor --* NPC
+Actor --* Player
+NPC --* ActorController
+Player --* ActorController
+Chip --* Map
+ActorController -* World
+Map --* World
+
+World --* Game
+Game --* GUI
+
+
+
+@enduml

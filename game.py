@@ -11,12 +11,6 @@ class screenStateEnum(enum.IntEnum):
     ON_MAP=0
     ON_CHAT=1
     ON_INVENTORY=2
-class mapHandler():
-    pass
-class inventoryHandler():
-    pass
-class chatHandler():
-    pass
 
 class game():
     def __init__(self,stage_datas,current_stage=0):
@@ -30,12 +24,15 @@ class game():
             self.field_map.set_actor(actor)
         print(self.actor_ctr.player)
 
+    def operate_game_on_map_state(self,keys):
+        pass
+
     def step(self,keys):
         if self.screen_state==screenStateEnum.ON_MAP:
-            print("ON_MAP")
-            print("UP")
+            self.operate_game_on_map_state(keys)
+        if self.actor_ctr.get_next_actor()==self.actor_ctr.player and keys==[]:
+            return -1
         res = self.actor_ctr.get_action()
-        print(res)
         return self.exe_act(res["action"],res["act_id"],res["target_id"],keys)
 
     def exe_act(self,action,actor_id,target_id,pushed_key=None):
@@ -48,6 +45,7 @@ class game():
                 self.actor_ctr.del_actor_as_player(target)
             else:
                 self.actor_ctr.del_actor(target)
+            print("killed!")
             actor.target = None
 
         def attack(actor,target):
@@ -75,7 +73,6 @@ class game():
                 print(s)
 
         print("\x1b[2J\x1b[H")
-        show_map()
         actor=self.actor_ctr.actors[actor_id]
         target=self.actor_ctr.actors[target_id]
         print("action",action)
@@ -99,6 +96,7 @@ class game():
                 attack(player,target)
             else:
                 print("you can't move there")
+            print(self.actor_ctr.player,2344)
             if "L" in cmd:
                 for _,a in self.actor_ctr.actors.items():
                     print(a.act_id,a.name,a.x,a.y,a.HP)
@@ -127,7 +125,7 @@ class game():
                     if player.target.HP < 0:
                         kill_actor(player,player.target)
             if cmd[0]=="G":
-                print(self.actor_ctr.player)
+                print(self.actor_ctr.player,123)
                 p=self.field_map.get_chip_info(self.actor_ctr.player.x,self.actor_ctr.player.y)
                 if p["door"] is not None:
                     _p=self.actor_ctr.player
@@ -199,6 +197,8 @@ class game():
                         g.actor_ctr.del_actor(target)
             else:
                 print(actor.name, "attacked but too far.")
+        show_map()
+        print(self.actor_ctr.player)
         return self
 
 if __name__=="__main__":

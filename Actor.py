@@ -26,7 +26,7 @@ class Actor():
     def __init__(self, data):
         default_data = {"act_state": -1, "act_id": -1, "name": "-1", "image": -1, "race": "-1", "job": "-1",
                         "HP_MAX": -1,"HP": -1, "MP_MAX": -1, "MP": -1, "STR": -1, "DEF": -1, "SPD": -1, "state": -1,
-                        "x": -1, "y": -1}
+                        "x": -1, "y": -1, "items":[]}
         default_data.update(data)
         data = default_data
         for d in data:
@@ -68,7 +68,4 @@ class Player(Actor):
         Actor.__init__(self, data)
 
     def get_action(self):
-        if self.target==None:
-            return {"action": "player","target_id":self.act_id}
-        else:
-            return {"action": "player", "target_id": self.target.act_id}
+       return {"action": "player","target_id":self.act_id if self.target==None else self.target.act_id}
