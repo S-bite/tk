@@ -25,16 +25,40 @@ class game():
         print(self.actor_ctr.player)
 
     def operate_game_on_map_state(self,keys):
-        pass
+        actor=self.actor_ctr.get_next_actor()
+        if not actor.is_player:
+            actor = self.actor_ctr.pick_next_actor()
+            print("not actor")
+            return 1
+        else:
+
+            if keys==[]:
+                return -1
+            actor = self.actor_ctr.pick_next_actor()
+
+            mx, my = 0, 0
+            if "UP" in keys:  # up
+                my -= 1
+            if "DOWN" in keys:  # down
+                my += 1
+            if "RIGHT" in keys:  # right
+                mx += 1
+            if "LEFT" in keys:  # left
+                mx -= 1
+            if self.field_map.is_movable(actor.x + mx, actor.y + my) == True:
+                self.field_map.move_actor(actor, actor.y + my, actor.x + mx)
+                actor.x += mx
+                actor.y += my
+                print(actor.x,actor.y)
+            return -1
+
+
 
     def step(self,keys):
         if self.screen_state==screenStateEnum.ON_MAP:
-            self.operate_game_on_map_state(keys)
-        if self.actor_ctr.get_next_actor()==self.actor_ctr.player and keys==[]:
-            return -1
-        res = self.actor_ctr.get_action()
-        return self.exe_act(res["action"],res["act_id"],res["target_id"],keys)
-
+            while self.operate_game_on_map_state(keys)!=-1:
+                pass
+        return self
     def exe_act(self,action,actor_id,target_id,pushed_key=None):
         cmd=pushed_key
         def kill_actor(actor,target):

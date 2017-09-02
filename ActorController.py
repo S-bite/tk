@@ -78,6 +78,9 @@ class ActorController():
         self.time = max((self.time + 1) % 1024, 1)
         return 0
 
+    def pick_next_actor(self):
+        self.tick_for_move_queue()
+        return self.move_queue.popleft()
     def get_next_actor(self):
         self.tick_for_move_queue()
         return self.move_queue[0]
