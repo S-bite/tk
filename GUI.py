@@ -31,6 +31,7 @@ class GUI():
 
     @window.event
     def input(self,_):
+
         res=[]
         for k in self.keys:
             if  self.keys[k]==True:
@@ -39,18 +40,23 @@ class GUI():
             game_data=self.game.step(res)
             if game_data==-1:
                 return
-            self.window.clear()
-            for x,_ in enumerate(game_data.field_map.terrain):
-                for y,terrain in enumerate(_):
-                    chip=self.CHAR_IMAGES[terrain*10]
-                    chip.x=x*32
-                    chip.y=y*32
-                    chip.draw()
-            time.sleep(0.25)
+        self.window.clear()
+
+        for x,_ in enumerate(game_data.field_map.terrain):
+            for y,terrain in enumerate(_):
+                chip=self.CHAR_IMAGES[terrain*10]
+                chip.x=x*32
+                chip.y=y*32
+                chip.draw()
+        chip=self.CHAR_IMAGES[92]
+        chip.x=game_data.actor_ctr.player.x*32
+        chip.y=(game_data.field_map.height-1)*32-game_data.actor_ctr.player.y*32
+        chip.draw()
+
 
     def run(self):
         pyglet.clock.schedule_interval(self.update, 1/30)
-        pyglet.clock.schedule_interval(self.input, 1/100)
+        pyglet.clock.schedule_interval(self.input, 1/30)
         pyglet.app.run()
 
 room1_act=ActorController()

@@ -24,7 +24,7 @@ import random as rnd
 
 class Actor():
     def __init__(self, data):
-        default_data = {"act_state": -1, "act_id": -1, "name": "-1", "image": -1, "race": "-1", "job": "-1",
+        default_data = {"is_player":True,"act_state": -1, "act_id": -1, "name": "-1", "image": -1, "race": "-1", "job": "-1",
                         "HP_MAX": -1,"HP": -1, "MP_MAX": -1, "MP": -1, "STR": -1, "DEF": -1, "SPD": -1, "state": -1,
                         "x": -1, "y": -1, "items":[]}
         default_data.update(data)
@@ -36,7 +36,7 @@ class Actor():
 # noinspection PyUnresolvedReferences
 class Enemy(Actor):
         def __init__(self,data):
-            default_data = {"move_type": 0, "dist": 3, "target": None, "tactics": {0: ["attack", 80], 1: ["heal", 20],
+            default_data = {"is_player":False,"move_type": 0, "dist": 3, "target": None, "tactics": {0: ["attack", 80], 1: ["heal", 20],
                                                                                    2: ["throw", 0],   3: ["beg", 0]}, }
             default_data.update(data)
             data = default_data
