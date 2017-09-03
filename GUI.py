@@ -19,14 +19,38 @@ class GUI():
         img=pyglet.image.load("graphics/chars.png",decoder=PNGImageDecoder())
         img.get_image_data()
         for char in pyglet.image.ImageGrid(img,img.height//32,img.width//32):
-            self.CHAR_IMAGES.append(pyglet.sprite.Sprite(char))
+            self.CHAR_IMAGES.append(char)
+
+        self.TERRAIN_IMAGES = []
+        img = pyglet.image.load("graphics/chip12e_map_fall.png", decoder=PNGImageDecoder())
+        img.get_image_data()
+        for terrain in pyglet.image.ImageGrid(img, img.height // 32, img.width // 32):
+            self.TERRAIN_IMAGES.append(terrain)
+
         self.game=game
         print(key._key_names)
         self.keys=key.KeyStateHandler()
         self.window.push_handlers(self.keys)
 
     @window.event
+    def on_draw():
+        pass
+    @window.event
     def update(self,_):
+        #draw game
+        self.window.clear()
+
+        field=self.game.field_map
+        for x,_ in enumerate(field.terrain):
+            for y,terrain in enumerate(_):
+                if terrain==0:
+                    self.TERRAIN_IMAGES[47].blit(x*32,(y+1)*32)
+                elif terrain==1:
+                    self.TERRAIN_IMAGES[5].blit(x*32,(y+1)*32)
+        actors=self.game.actor_ctr.actors.values()
+        for actor in actors:
+            self.CHAR_IMAGES[actor.image].blit(actor.x*32,field.height*32-actor.y*32)
+
         pass
 
     @window.event
@@ -40,19 +64,6 @@ class GUI():
             game_data=self.game.step(res)
             if game_data==-1:
                 return
-        self.window.clear()
-
-        for x,_ in enumerate(game_data.field_map.terrain):
-            for y,terrain in enumerate(_):
-                chip=self.CHAR_IMAGES[terrain*10]
-                chip.x=x*32
-                chip.y=y*32
-                chip.draw()
-        chip=self.CHAR_IMAGES[92]
-        chip.x=game_data.actor_ctr.player.x*32
-        chip.y=(game_data.field_map.height-1)*32-game_data.actor_ctr.player.y*32
-        chip.draw()
-
 
     def run(self):
         pyglet.clock.schedule_interval(self.update, 1/30)
