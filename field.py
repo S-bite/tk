@@ -56,7 +56,7 @@ class field():
     def del_actor(self, actor):
         self.actor[actor.y][actor.x] = None
 
-    def move_actor(self, actor, y, x):
+    def move_actor(self, actor, x, y):
         self.actor[actor.y][actor.x] = None
         self.actor[y][x] = actor
 

@@ -4,6 +4,7 @@ from ActorController import ActorController
 from Actor import Player,Enemy,Actor
 from field import field
 from input import key
+import random
 import enum
 import pyglet.window.key
 from collections import deque
@@ -60,7 +61,34 @@ class game():
 
         #if actor is not player
         if not actor.is_player:
+
+
             actor = self.actor_ctr.pick_next_actor()
+            #単なる距離ではなく、移動（斜め含む）でたどり着ける最短手数
+            move_distance=-1 if actor.target==None else (abs(actor.x-actor.target.x),abs(actor.y-actor.target.y))
+            if move_distance==1:
+                attack_actor(actor,actor.target)
+                return -1
+            action=actor.get_action()
+            if action["action"]=="move_random":
+                mx=random.randint(-1,1)
+                my = random.randint(-1, 1)
+                if self.field_map.is_movable(actor.x+mx,actor.y+my):
+                    self.field_map.move_actor(actor,actor.x+mx,actor.y+my)
+                    actor.x += mx
+                    actor.y += my
+
+                    return -1
+            elif action["action"]=="move":
+                mx = (actor.target.x-actor.x)//max(abs(actor.target.x-actor.x),1)
+                my = (actor.target.y-actor.y)//max(abs(actor.target.y-actor.y),1)
+                if self.field_map.is_movable(actor.x + mx, actor.y + my):
+                    self.field_map.move_actor(actor, actor.x + mx, actor.y + my)
+                    actor.x += mx
+                    actor.y += my
+
+                return -1
+
             return -1
         else:
 
@@ -79,12 +107,14 @@ class game():
                 mx -= 1
             #方向キーのいずれかが押されていたら
             if mx !=0 or my!=0:
-                if self.field_map.is_movable(actor.x + mx, actor.y + my) == True:
-                    self.field_map.move_actor(actor, actor.y + my, actor.x + mx)
+                if self.field_map.is_movable(actor.x + mx, actor.y + my):
+                    self.field_map.move_actor(actor, actor.x + mx, actor.y + my)
                     actor.x += mx
                     actor.y += my
                 elif self.field_map.is_occupied_by_actor(actor.x+mx,actor.y+my):
                     attack_actor(actor,self.field_map.get_actor(actor.x+mx,actor.y+my))
+
+
 
             return 1
 

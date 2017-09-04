@@ -43,15 +43,13 @@ class Enemy(Actor):
             Actor.__init__(self, data)
 
         def get_action(self):
-            print (self.target)
             if self.target == None:
                 if self.move_type == 0:
                     return {"action": "move_random","target_id":self.act_id}
                 if self.move_type == 1:
                     return {"action": "none","target_id":self.act_id}
             if abs(self.target.x-self.x)+abs(self.target.y-self.y) != self.dist:
-                print(self.target.x,self.target.y,abs(self.target.x-self.x)+abs(self.target.y-self.y),self.dist)
-                return {"action": "move","target_id":self.target.act_id}
+                 return {"action": "move","target_id":self.target.act_id}
 
             tactics = [self.tactics[i][0] for i in self.tactics]
             weights = [self.tactics[i][1] for i in self.tactics]
