@@ -6,7 +6,7 @@ from field import field
 from input import key
 import enum
 import pyglet.window.key
-
+from collections import deque
 class screenStateEnum(enum.IntEnum):
     ON_MAP=0
     ON_CHAT=1
@@ -14,6 +14,7 @@ class screenStateEnum(enum.IntEnum):
 
 class game():
     def __init__(self,stage_datas,current_stage=0):
+        self.game_log=deque()
         self.stage_datas=[]
         for stage_data in stage_datas:
             self.stage_datas.append([stage_data["field"].name,stage_data["field"],stage_data["ActorController"]])
@@ -25,15 +26,46 @@ class game():
         print(self.actor_ctr.player)
 
     def operate_game_on_map_state(self,keys):
+        #define some macro here
+        def kill_actor(actor, target):
+            self.field_map.del_actor(target)
+            if target in self.actor_ctr.move_queue:
+                self.actor_ctr.move_queue.remove(target)
+            if target == self.actor_ctr.player:
+                self.actor_ctr.del_actor_as_player(target)
+            else:
+                self.actor_ctr.del_actor(target)
+            self.game_log.append(actor.name + " killed " + target.name)
+
+            actor.target = None
+
+        def attack_actor(actor, target):
+            target.HP -= int((actor.STR // target.DEF) * 3)
+            self.game_log.append(actor.name+" attacks "+target.name)
+            if target.HP < 0:
+                kill_actor(actor, target)
+        def is_contain(keys,subs):
+            for sub in subs:
+                if not sub in keys:
+                    break
+            else:
+                return True
+            return False
+
+        #macro ends
+
+
+
         actor=self.actor_ctr.get_next_actor()
+
+        #if actor is not player
         if not actor.is_player:
             actor = self.actor_ctr.pick_next_actor()
-            print("not actor")
-            return 1
+            return -1
         else:
 
             if keys==[]:
-                return -1
+                return 1
             actor = self.actor_ctr.pick_next_actor()
 
             mx, my = 0, 0
@@ -45,18 +77,22 @@ class game():
                 mx += 1
             if "LEFT" in keys:  # left
                 mx -= 1
-            if self.field_map.is_movable(actor.x + mx, actor.y + my) == True:
-                self.field_map.move_actor(actor, actor.y + my, actor.x + mx)
-                actor.x += mx
-                actor.y += my
-                print(actor.x,actor.y)
-            return -1
+            #方向キーのいずれかが押されていたら
+            if mx !=0 or my!=0:
+                if self.field_map.is_movable(actor.x + mx, actor.y + my) == True:
+                    self.field_map.move_actor(actor, actor.y + my, actor.x + mx)
+                    actor.x += mx
+                    actor.y += my
+                elif self.field_map.is_occupied_by_actor(actor.x+mx,actor.y+my):
+                    attack_actor(actor,self.field_map.get_actor(actor.x+mx,actor.y+my))
+
+            return 1
 
 
 
     def step(self,keys):
         if self.screen_state==screenStateEnum.ON_MAP:
-            while self.operate_game_on_map_state(keys)!=-1:
+            while self.operate_game_on_map_state(keys)!=1:
                 pass
         return self
     def exe_act(self,action,actor_id,target_id,pushed_key=None):

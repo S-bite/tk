@@ -10,6 +10,8 @@ from game import game
 from Actor import Player,Enemy,Actor
 from field import field
 import time
+from pyglet.gl import *
+import time
 class GUI():
     window = pyglet.window.Window()
 
@@ -38,15 +40,25 @@ class GUI():
     @window.event
     def update(self,_):
         #draw game
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         self.window.clear()
 
+
+        #draw terrain
         field=self.game.field_map
         for x,_ in enumerate(field.terrain):
             for y,terrain in enumerate(_):
                 if terrain==0:
-                    self.TERRAIN_IMAGES[47].blit(x*32,(y+1)*32)
+                    self.TERRAIN_IMAGES[47].blit(x*32,field.height*32-y*32)
                 elif terrain==1:
-                    self.TERRAIN_IMAGES[5].blit(x*32,(y+1)*32)
+                    self.TERRAIN_IMAGES[5].blit(x*32,field.height*32-y*32)
+        for x, _ in enumerate(field.door):
+            for y, door in enumerate(_):
+                if door:
+                    self.TERRAIN_IMAGES[14].blit(x * 32, field.height*32-y * 32)
+
+        #draw actor
         actors=self.game.actor_ctr.actors.values()
         for actor in actors:
             self.CHAR_IMAGES[actor.image].blit(actor.x*32,field.height*32-actor.y*32)
@@ -67,24 +79,22 @@ class GUI():
 
     def run(self):
         pyglet.clock.schedule_interval(self.update, 1/30)
-        pyglet.clock.schedule_interval(self.input, 1/30)
+        pyglet.clock.schedule_interval(self.input, 1/10)
         pyglet.app.run()
 
 room1_act=ActorController()
-p=Player({"name":"Player","SPD":20,"HP":100,"STR":150,"DEF":5,"x":5,"y":5})
-room1_act.add_actor_as_player(p)
-room1_act.add_actor(Enemy({"name":"rat","SPD":10,"HP":10,"STR":5,"DEF":5,"x":8,"y":1,"dist":1}),target=room1_act.player)
-room1_act.add_actor(Enemy({"name":"rat","SPD":10,"HP":10,"STR":5,"DEF":5,"x":3,"y":4,"dist":1}),target=room1_act.player)
+room1_act.add_actor(Enemy({"name":"rat","SPD":10,"HP":10,"STR":5,"DEF":5,"x":8,"y":1,"dist":1,"image":258}),target=room1_act.player)
+room1_act.add_actor(Enemy({"name":"rat","SPD":10,"HP":10,"STR":5,"DEF":5,"x":3,"y":4,"dist":1,"image":267}),target=room1_act.player)
 
 room1_map=field(name="room1")
 room1_map.door[1][1]=["room2",8,8]
 
 room2_act = ActorController()
-p = Player({"name": "Player", "SPD": 20, "HP": 100, "STR": 150, "DEF": 5, "x": 5, "y": 5})
+p = Player({"name": "Player", "SPD": 20, "HP": 100, "STR": 150, "DEF": 5, "x": 5, "y": 5,"image":282})
 room2_act.add_actor_as_player(p)
-room2_act.add_actor(Enemy({"name": "bat", "SPD": 10, "HP": 5, "STR": 10, "DEF": 8, "x": 1, "y": 1, "dist": 1}),
+room2_act.add_actor(Enemy({"name": "bat", "SPD": 10, "HP": 5, "STR": 10, "DEF": 8, "x": 1, "y": 1, "dist": 1,"image":258}),
                     target=room2_act.player)
-room2_act.add_actor(Enemy({"name": "bat", "SPD": 10, "HP": 5, "STR": 10, "DEF": 8, "x": 8, "y": 1, "dist": 1}),
+room2_act.add_actor(Enemy({"name": "bat", "SPD": 10, "HP": 5, "STR": 10, "DEF": 8, "x": 8, "y": 1, "dist": 1,"image":267}),
                     target=room2_act.player)
 
 room2_map = field(name="room2")

@@ -60,6 +60,12 @@ class field():
         self.actor[actor.y][actor.x] = None
         self.actor[y][x] = actor
 
+    def get_actor(self,x,y):
+        return self.actor[y][x]
+    def is_occupied_by_actor(self,x,y):
+        if self.actor[y][x] != None:
+            return True
+        return False
     def is_movable(self, x, y):
         if self.terrain[y][x] == 1:
             return False
