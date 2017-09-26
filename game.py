@@ -124,6 +124,7 @@ class game():
         if self.screen_state==screenStateEnum.ON_MAP:
             while self.operate_game_on_map_state(keys)!=1:
                 pass
+
         return self
     def exe_act(self,action,actor_id,target_id,pushed_key=None):
         cmd=pushed_key

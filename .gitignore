@@ -2,3 +2,4 @@
 !/graphics/.gitkeep
 *.pyc
 /.idea
+/pyenv_tk
