@@ -93,7 +93,7 @@ class game():
         else:
 
             if keys==[]:
-                return 1
+                return 0
             actor = self.actor_ctr.pick_next_actor()
 
             mx, my = 0, 0
@@ -114,7 +114,31 @@ class game():
                 elif self.field_map.is_occupied_by_actor(actor.x+mx,actor.y+my):
                     attack_actor(actor,self.field_map.get_actor(actor.x+mx,actor.y+my))
 
-
+            if "G" in keys:
+                print("G")
+                return 1
+                p=self.field_map.get_chip_info(self.actor_ctr.player.x,self.actor_ctr.player.y)
+                if p["door"] is not None:
+                    _p=self.actor_ctr.player
+                    index=None
+                    print(self.stage_datas)
+                    for stageData in self.stage_datas:
+                        if stageData[0]==p["door"][0]:
+                            index=stageData
+                    if index is None:
+                        raise Exception("index not found")
+                    print(type(index))
+                    self.actor_ctr=index[2]
+                    self.field_map=index[1]
+                    self.actor_ctr.player=_p
+                    self.actor_ctr.actors[self.actor_ctr.player.act_id]=_p
+                    self.actor_ctr.player.x=int(p["door"][1])
+                    self.actor_ctr.player.y=int(p["door"][2])
+                    self.actor_ctr.update_target(_p)
+                    for _, actor in self.actor_ctr.actors.items():
+                        self.field_map.set_actor(actor)
+                else:
+                    print("no port found")
 
             return 1
 
@@ -122,10 +146,12 @@ class game():
 
     def step(self,keys):
         if self.screen_state==screenStateEnum.ON_MAP:
-            while self.operate_game_on_map_state(keys)!=1:
-                pass
-
-        return self
+            # I KNOW it's too kludge...
+            res=self.operate_game_on_map_state(keys)
+            while res==-1:
+                res=self.operate_game_on_map_state(keys)
+            # return True if game state changed
+        return res==1
     def exe_act(self,action,actor_id,target_id,pushed_key=None):
         cmd=pushed_key
         def kill_actor(actor,target):

@@ -1,1 +1,0 @@
-#coing:utf-8

@@ -1,23 +1,33 @@
 from Actor import Actor
 import random
-
+import types
 
 class field():
     def __init__(self, x=10, y=10,name="field",terrain_data=None):
         def generate_list(x, y, default):
-            if type(default) != type(object):
-                return [[default for _ in range(x)] for __ in range(y)]
 
-            return [[default() for _ in range(x)] for __ in range(y)]
+            if type(default) == types.FunctionType:
+                return [[default() for _ in range(x)] for __ in range(y)]
+            return [[default for _ in range(x)] for __ in range(y)]
 
+        def random_image_id():
+            return random.randint(0,90)
         self.terrain = generate_list(x, y, 0)
         self.actor = generate_list(x, y, None)
         self.item = generate_list(x, y, None)
         self.door = generate_list(x, y, None)
+        self.image=generate_list(x,y,32)
         self.rooms = []
         self.name=name
         self.height=y
         self.width=x
+    def rise_wall(self):
+        for _ in range(100):
+            x=random.randint(0,self.width-1)
+            y=random.randint(0,self.height-1)
+            self.terrain[y][x]=1
+            self.image[y][x]=1
+
     def create_room(self, sx, sy, sizex, sizey):
         is_conflict = False
         tmp = self.terrain
@@ -28,6 +38,8 @@ class field():
                 break
             self.terrain[sy][sx + i] = 1
             self.terrain[sy + sizey][sx + i] = 1
+            self.image[sy][sx + i] = 1
+            self.image[sy + sizey][sx + i] = 1
 
         if is_conflict:
             self.terrain = tmp
@@ -39,6 +51,8 @@ class field():
                 break
             self.terrain[sy + i][sx] = 1
             self.terrain[sy + i][sx + sizex] = 1
+            self.image[sy + i][sx] = 1
+            self.image[sy + i][sx + sizex] = 1
 
         if is_conflict:
             self.terrain = tmp

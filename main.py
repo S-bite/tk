@@ -1,60 +1,31 @@
-# coding:utf-8
-import variable
-from Actor import *
-from ActorController import *
-from world import *
-
-l = stage.getImageList("chars.bmp")
-clock = pygame.time.Clock()
-
-
-
-class mapController():
-    def __init__(self):
-        self.field = []
-        self.char = []
-        self.item = []
-
-
-currentMap = mapController()
-
-accn = ActorController()
-
+from GUI import GUI
+from Actor import Enemy,Player
+from ActorController import ActorController
+from field import field
+from game import game
 
 def main():
-    worldInit(10)
-    px = random.randint(0, 256)
-    py = random.randint(0, 256)
-    while not worldMap[py][px] == LAND:
-        px = random.randint(0, 255)
-        py = random.randint(0, 255)
+    room1_act=ActorController()
+    room1_act.add_actor(Enemy({"name":"rat","SPD":10,"HP":10,"STR":5,"DEF":5,"x":8,"y":1,"dist":1,"image":258}),target=room1_act.player)
+    room1_act.add_actor(Enemy({"name":"rat","SPD":10,"HP":10,"STR":5,"DEF":5,"x":3,"y":4,"dist":1,"image":267}),target=room1_act.player)
 
-    pData = [getNewId(), "Player", 96, "None", "Human", 100, 100, 50, 50, 10, ["Normal"]]
-    pPos = [px, py]
+    room1_map=field(name="room1",x=10,y=10)
+    room1_map.door[1][1]=["room2",8,8]
 
-    p = Player(pData, pPos)
-    p.act_state = WAIT_KEY
-    actors.append(p)
-    for i in range(100):
-        e = Enemy(
-            [getNewId(), "ene", random.randint(1, 90), "None", "Gob", 100, 100, 50, 50, 5, ["Normal"]],
-            [random.randint(0, 255), random.randint(0, 255)])
-        e.act_state = WAIT
-        actors.append(e)
-
-    while True:
-        stage.prepareRedraw()
-        # print cutWorldMapToDisplay(worldMap, p.x,p.y,mapX,mapY)
-
-        stage.mapQueue=cutWorldMapToDisplay(worldMap, p.x, p.y, mapX, mapY)
-        stage.charQueue=cutWorldMapToDisplay(char, p.x, p.y, mapX, mapY)
-        stage.draw()
-        accn.action()
-        #stage.drawChips(cutWorldMapToDisplay(worldMap, p.x, p.y, mapX, mapY), source="field")
-        #stage.drawChips(cutWorldMapToDisplay(char, p.x, p.y, mapX, mapY), "char")
-        clock.tick(60)
-        #stage.draw()
+    room2_act = ActorController()
+    p = Player({"name": "Player", "SPD": 20, "HP": 100, "STR": 150, "DEF": 5, "x": 5, "y": 5,"image":282})
+    room2_act.add_actor_as_player(p)
+    room2_act.add_actor(Enemy({"name": "bat", "SPD": 10, "HP": 5, "STR": 10, "DEF": 8, "x": 1, "y": 1, "dist": 1,"image":258}),
+                        target=room2_act.player)
+    room2_act.add_actor(Enemy({"name": "bat", "SPD": 10, "HP": 5, "STR": 10, "DEF": 8, "x": 8, "y": 1, "dist": 1,"image":267}),
+                        target=room2_act.player)
+    room2_map = field(name="room2",x=30,y=30)
+    room2_map.create_boarder()
+    room2_map.rise_wall()
+    room2_map.door[8][8] = ["room1", 1, 1]
+    gm = game([{"field": room1_map, "ActorController": room1_act}, {"field": room2_map, "ActorController": room2_act}], 1)
+    g=GUI(gm)
+    g.run()
 
 if __name__ == '__main__':
-
     main()
