@@ -1,4 +1,4 @@
-import pyglet
+#import pyglet
 import random
 from pyglet.image.codecs.png import PNGImageDecoder
 from pyglet.window import key
@@ -11,7 +11,6 @@ from Actor import Player,Enemy,Actor
 from field import field
 import time
 from pyglet.gl import *
-import time
 from utils import clip_array
 
 class GUI():
@@ -21,9 +20,10 @@ class GUI():
     window = pyglet.window.Window(GUI_width,GUI_height)
 
     def __init__(self,game):
-
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
         img=pyglet.image.load("graphics/back.png",decoder=PNGImageDecoder())
-        self.BACK_IMAGE=img.get_region(0,0,self.GUI_width,self.GUI_height-self.GUI_map_height)
+        img=img.get_region(0,0,self.GUI_width,self.GUI_height-self.GUI_map_height)
+        self.BACK_IMAGE=img#=img.get_region(0,0,self.GUI_width,self.GUI_height-self.GUI_map_height)
         self.CHAR_IMAGES=[]
         img=pyglet.image.load("graphics/chars.png",decoder=PNGImageDecoder())
         #img.get_image_data()
@@ -35,6 +35,11 @@ class GUI():
         #img.get_image_data()
         for terrain in pyglet.image.ImageGrid(img, img.height // 32, img.width // 32):
             self.TERRAIN_IMAGES.append(terrain)
+        raw = pyglet.image.load('graphics/b_light.png',decoder=PNGImageDecoder())
+
+        raw_seq = pyglet.image.ImageGrid(raw, 5, 5)
+        anim = pyglet.image.Animation.from_image_sequence(raw_seq, 0.1,1)
+        self.test_anim= pyglet.sprite.Sprite(anim)
         self.was_game_changed=True
         self.game=game
         self.keys=key.KeyStateHandler()
@@ -45,15 +50,16 @@ class GUI():
         pass
     @window.event
     def update(self,_):
+
         #draw game
         if self.was_game_changed==False:
             return 0
         glEnable(GL_BLEND)
         field=self.game.field_map
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         self.window.clear()
 
 
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         #draw terrain
         player_x=self.game.actor_ctr.player.x
         player_y=self.game.actor_ctr.player.y
@@ -80,15 +86,23 @@ class GUI():
         for actor in actors:
             self.CHAR_IMAGES[actor.image].blit(relative_x(actor.x) ,relative_y(actor.y))
 
-
-        label = pyglet.text.Label('',
-        font_size=36,
-        x=self.GUI_width//2, y=self.GUI_height//2,
-        anchor_x='center', anchor_y='center')
-        label.draw()
         self.BACK_IMAGE.blit(0,0)
+
+        pad_num=max(0,6-len(self.game.log_message))
+        drawing_msg="\n"*pad_num+"\n".join(self.game.log_message[-6:])
+        document = pyglet.text.decode_text(drawing_msg)
+        document.set_style(0, 0, {
+            "color": (0,0,0,255),
+            "line_spacing": 24,
+            "wrap": "char"
+        })
+        layout = pyglet.text.layout.TextLayout(document, self.GUI_width, self.GUI_height-self.GUI_map_height,
+                                       multiline=True)
+        layout.draw()
+
     @window.event
     def input(self,_):
+        self.test_anim.draw()
 
         in_keys=[]
         for k in self.keys:
@@ -96,6 +110,7 @@ class GUI():
                 in_keys.append(key._key_names[k])
         #because it's an asyncronous
         if in_keys==[]:
+            self.was_game_changed=False
             return
         res= self.game.step(in_keys)
         if self.was_game_changed==False:

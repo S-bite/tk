@@ -21,8 +21,8 @@ class field():
         self.name=name
         self.height=y
         self.width=x
-    def rise_wall(self):
-        for _ in range(100):
+    def rise_wall(self,n=100):
+        for _ in range(n):
             x=random.randint(0,self.width-1)
             y=random.randint(0,self.height-1)
             self.terrain[y][x]=1
@@ -33,7 +33,8 @@ class field():
         tmp = self.terrain
         sizex, sizey = sizex + 1, sizey + 1
         for i in range(sizex + 1):
-            if self.terrain[sy][sx + i] == 1 or self.terrain[sy + sizey][sx + i] == 1:
+            if sx+i>=len(self.terrain[0]) or sx+i<=-1 or sy+sizey>=len(self.terrain) or sy+sizey<=-1 \
+            or self.terrain[sy][sx + i] == 1 or self.terrain[sy + sizey][sx + i] == 1:
                 is_conflict = True
                 break
             self.terrain[sy][sx + i] = 1
@@ -46,7 +47,8 @@ class field():
             return -1
 
         for i in range(1, sizey):
-            if self.terrain[sy + i][sx] == 1 or self.terrain[sy + i][sx + sizex] == 1:
+            if sx+sizex>=len(self.terrain[0]) or sx+sizex<=-1 or sy+i>=len(self.terrain) or sy+i<=-1\
+            or self.terrain[sy + i][sx] == 1 or self.terrain[sy + i][sx + sizex] == 1 :
                 is_conflict = True
                 break
             self.terrain[sy + i][sx] = 1
@@ -58,7 +60,6 @@ class field():
             self.terrain = tmp
             return -1
 
-        self.rooms.append((len(self.rooms), sx, sy, sizex, sizey))
         return 0
 
     def create_boarder(self):
@@ -77,10 +78,15 @@ class field():
     def get_actor(self,x,y):
         return self.actor[y][x]
     def is_occupied_by_actor(self,x,y):
+        if x>=len(self.terrain[0]) or x<=-1 or y>=len(self.terrain) or y<=-1 :
+            return False
         if self.actor[y][x] != None:
             return True
         return False
     def is_movable(self, x, y):
+        if x>=len(self.terrain[0]) or x<=-1 or y>=len(self.terrain) or y<=-1 :
+            return False
+
         if self.terrain[y][x] == 1:
             return False
         elif self.actor[y][x] != None:

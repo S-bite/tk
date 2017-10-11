@@ -24,7 +24,7 @@ class game():
         self.screen_state=screenStateEnum.ON_MAP
         for _,actor in self.actor_ctr.actors.items():
             self.field_map.set_actor(actor)
-        print(self.actor_ctr.player)
+        self.log_message=[]
 
     def operate_game_on_map_state(self,keys):
         #define some macro here
@@ -42,7 +42,7 @@ class game():
 
         def attack_actor(actor, target):
             target.HP -= int((actor.STR // target.DEF) * 3)
-            self.game_log.append(actor.name+" attacks "+target.name)
+            self.log_message.append(actor.name+"は"+target.name+"を攻撃した"+str(random.randint(1,100)))
             if target.HP < 0:
                 kill_actor(actor, target)
         def is_contain(keys,subs):
@@ -113,32 +113,23 @@ class game():
                     actor.y += my
                 elif self.field_map.is_occupied_by_actor(actor.x+mx,actor.y+my):
                     attack_actor(actor,self.field_map.get_actor(actor.x+mx,actor.y+my))
+            else:
+                if "G" in keys:
+                    door_data=self.field_map.door[self.actor_ctr.player.y][self.actor_ctr.player.x]
+                    if door_data:
+                        _p=self.actor_ctr.player
 
-            if "G" in keys:
-                print("G")
-                return 1
-                p=self.field_map.get_chip_info(self.actor_ctr.player.x,self.actor_ctr.player.y)
-                if p["door"] is not None:
-                    _p=self.actor_ctr.player
-                    index=None
-                    print(self.stage_datas)
-                    for stageData in self.stage_datas:
-                        if stageData[0]==p["door"][0]:
-                            index=stageData
-                    if index is None:
-                        raise Exception("index not found")
-                    print(type(index))
-                    self.actor_ctr=index[2]
-                    self.field_map=index[1]
-                    self.actor_ctr.player=_p
-                    self.actor_ctr.actors[self.actor_ctr.player.act_id]=_p
-                    self.actor_ctr.player.x=int(p["door"][1])
-                    self.actor_ctr.player.y=int(p["door"][2])
-                    self.actor_ctr.update_target(_p)
-                    for _, actor in self.actor_ctr.actors.items():
-                        self.field_map.set_actor(actor)
-                else:
-                    print("no port found")
+                        self.field_map=door_data[0]
+                        self.actor_ctr=door_data[1]
+                        self.actor_ctr.player=_p
+                        self.actor_ctr.actors[self.actor_ctr.player.act_id]=_p
+                        self.actor_ctr.player.x=int(door_data[2])
+                        self.actor_ctr.player.y=int(door_data[3])
+                        self.actor_ctr.update_target(_p)
+                        for _, actor in self.actor_ctr.actors.items():
+                            self.field_map.set_actor(actor)
+                    else:
+                        print("no port found")
 
             return 1
 
